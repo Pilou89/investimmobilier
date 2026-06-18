@@ -81,6 +81,15 @@
   .kpi-value{font-family:var(--mono);font-size:18px;font-weight:700;line-height:1;margin-bottom:2px}
   .kpi-unit{font-size:10px;color:var(--muted2)}
   .kpi-tooltip{display:none;position:absolute;top:calc(100% + 6px);left:0;transform:none;width:230px;background:#1e293b;border-radius:6px;padding:8px 10px;font-size:11px;color:#cbd5e1;line-height:1.5;z-index:50;pointer-events:none;box-shadow:0 4px 12px rgba(0,0,0,.15)}
+
+  .sim-lmnp-impact{background:linear-gradient(135deg,#ecfdf5,#eff6ff);border:1px solid #bbf7d0;border-radius:12px;padding:14px 16px;margin-bottom:14px}
+  .sim-lmnp-header{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:10px}
+  .sim-lmnp-title{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:#166534}
+  .sim-lmnp-note{font-size:11px;color:var(--muted);line-height:1.45;max-width:560px;text-align:right}
+  .sim-lmnp-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+  .sim-lmnp-item{background:white;border:1px solid var(--border);border-radius:9px;padding:10px 12px}
+  .sim-lmnp-item .label{font-size:9px;font-weight:600;text-transform:uppercase;letter-spacing:.07em;color:var(--muted2);margin-bottom:5px}
+  .sim-lmnp-item .value{font-family:var(--mono);font-size:17px;font-weight:700}.sim-lmnp-item.gain{background:#f0fdf4;border-color:#bbf7d0}.sim-lmnp-item.gain .value{color:var(--green)}
   .kpi-card{cursor:help}
   .kpi-card:hover .kpi-tooltip,.kpi-card:focus-within .kpi-tooltip{display:block}
   .c-red{color:var(--red)}.c-green{color:var(--green)}.c-orange{color:var(--orange)}.c-blue{color:var(--accent)}.c-muted{color:var(--muted)}
@@ -212,6 +221,7 @@
 
   @media(max-width:1100px){.input-row{grid-template-columns:1fr 1fr}.bottom-row{grid-template-columns:1fr}}
   @media(max-width:900px){.investor-kpis,.wealth-grid{grid-template-columns:1fr 1fr}.lmnp-decision-grid{grid-template-columns:1fr}}
+  @media(max-width:900px){.sim-lmnp-grid{grid-template-columns:1fr 1fr}.sim-lmnp-header{flex-direction:column}.sim-lmnp-note{text-align:left}}
   @media(max-width:700px){.input-row{grid-template-columns:1fr}.kpi-grid{grid-template-columns:repeat(2,1fr)}.lmnp-inputs{grid-template-columns:1fr}.info-grid{grid-template-columns:1fr}.amort-grid{grid-template-columns:1fr 1fr}.investor-kpis,.wealth-grid,.asset-value-grid{grid-template-columns:1fr}.wealth-total{align-items:flex-start;flex-direction:column}.wealth-total .sub{text-align:left}}
 </style>
 </head>
@@ -271,6 +281,20 @@
     <div class="kpi-card"><div class="kpi-tooltip">Loyers − charges / (Prix + frais + travaux) × 100. Hors financement.</div><div class="kpi-label">Rendement net</div><div class="kpi-value c-blue" id="kpi-rdt-net">—</div><div class="kpi-unit">% / an</div></div>
     <div class="kpi-card"><div class="kpi-tooltip">Prix d'achat divisé par la surface.</div><div class="kpi-label">Prix / m²</div><div class="kpi-value c-muted" id="kpi-prix-m2">—</div><div class="kpi-unit">€/m²</div></div>
   </div>
+
+  <div class="sim-lmnp-impact">
+    <div class="sim-lmnp-header">
+      <div class="sim-lmnp-title">Impact fiscal LMNP sur cette simulation</div>
+      <div class="sim-lmnp-note">Ces montants reprennent les hypothèses de la page LMNP : TMI, part terrain et mobilier amortissable.</div>
+    </div>
+    <div class="sim-lmnp-grid">
+      <div class="sim-lmnp-item"><div class="label">Cash-flow avant impôt</div><div class="value" id="sim-lmnp-cf-avant">—</div></div>
+      <div class="sim-lmnp-item"><div class="label">Cash-flow après LMNP</div><div class="value" id="sim-lmnp-cf-apres">—</div></div>
+      <div class="sim-lmnp-item gain"><div class="label">Économie fiscale</div><div class="value" id="sim-lmnp-eco">—</div></div>
+      <div class="sim-lmnp-item gain"><div class="label">Patrimoine créé / an</div><div class="value" id="sim-lmnp-patrimoine">—</div></div>
+    </div>
+  </div>
+
 
   <div class="input-row">
     <div class="panel panel-bien">
@@ -573,6 +597,8 @@ function update(){
     kpis:{cfM:Math.round(cfM),effort:Math.round(effort),enrich:Math.round(enrich),rdtB:rdtB.toFixed(2),rdtN:rdtN.toFixed(2),prixM2:Math.round(prix/surface)}
   };
 
+  updateSimulatorLMNPImpact();
+
   var labels=[],vals=[],dettes=[],pats=[],enrichs=[],mise=apport+fraisNot+fraisAg+travaux;
   for(var n=0;n<=horizon;n++){
     labels.push(n===0?'Achat':'An '+n);
@@ -780,6 +806,35 @@ function fmtK(n){return Math.round(n).toLocaleString('fr-FR');}
 function escHtml(s){var d=document.createElement('div');d.textContent=s;return d.innerHTML;}
 
 // ─── LMNP ───
+
+function getLMNPAssumptions(){
+  return {
+    terrain:get('lr-terrain'),
+    mobilier:get('lr-mobilier'),
+    tmi:parseFloat(document.getElementById('l-tmi').value)
+  };
+}
+
+function computeLMNPImpact(s){
+  var a=getLMNPAssumptions(),tt=(a.tmi+17.2)/100;
+  var valeurAmort=s.prix*(1-a.terrain/100);
+  var aB=valeurAmort/30,aT=s.travaux/15,aM=a.mobilier/7,aF=(s.fraisAg+s.fraisNot)/s.duree,aTotal=aB+aT+aM+aF;
+  var bSans=Math.max(0,s.revAn-s.chargesAn-s.intAn1),bAvec=Math.max(0,bSans-aTotal);
+  var impotSans=bSans*tt,impotAvec=bAvec*tt,economie=impotSans-impotAvec;
+  var cfApres=s.cfM-impotAvec/12;
+  var capital=s.mens*12-s.intAn1,valorisation=s.prix*(s.params.hausse||0)/100;
+  var patrimoine=capital+cfApres*12+economie+valorisation;
+  return {a:a,valeurAmort:valeurAmort,aB:aB,aT:aT,aM:aM,aF:aF,aTotal:aTotal,bSans:bSans,bAvec:bAvec,impotSans:impotSans,impotAvec:impotAvec,economie:economie,cfApres:cfApres,capital:capital,valorisation:valorisation,patrimoine:patrimoine};
+}
+
+function updateSimulatorLMNPImpact(){
+  var s=window._sim;if(!s)return;
+  var m=computeLMNPImpact(s);
+  set('sim-lmnp-cf-avant',fmt(s.cfM)+'/mois');
+  set('sim-lmnp-cf-apres',fmt(m.cfApres)+'/mois');
+  set('sim-lmnp-eco',fmt(m.economie)+'/an');
+  set('sim-lmnp-patrimoine',fmt(m.patrimoine)+'/an');
+}
 function estimateShieldYears(s,taxable,aB,aT,aM,aF){
   if(taxable<=0)return 'revenus déjà neutralisés';
   var years=0;
@@ -798,20 +853,17 @@ function estimateShieldYears(s,taxable,aB,aT,aM,aF){
 
 function updateLMNP(){
   var s=window._sim;if(!s)return;
-  var tPct=get('lr-terrain'),mob=get('lr-mobilier'),tmi=parseFloat(document.getElementById('l-tmi').value);
+  var m=computeLMNPImpact(s),tPct=m.a.terrain,mob=m.a.mobilier;
   set('lv-terrain',tPct+' %');set('lv-mobilier',fmt(mob));
-  var valeurAmort=s.prix*(1-tPct/100);
-  var aB=valeurAmort/30,aT=s.travaux/15,aM=mob/7,aF=(s.fraisAg+s.fraisNot)/s.duree,aTotal=aB+aT+aM+aF;
-  set('lav-bien',fmt(s.prix));set('lav-terrain',tPct+' %');set('lav-amortissable',fmt(valeurAmort));
-  set('la-bati',fmt(aB));set('la-travaux',fmt(aT));set('la-mobilier',fmt(aM));set('la-frais',fmt(aF));set('la-total',fmt(aTotal));set('la-interets',fmt(s.intAn1));
-  var bSans=Math.max(0,s.revAn-s.chargesAn-s.intAn1),bAvec=Math.max(0,bSans-aTotal),tt=(tmi+17.2)/100;
-  var iS=bSans*tt,iA=bAvec*tt,eco=iS-iA;
-  var shield=estimateShieldYears(s,bSans,aB,aT,aM,aF);
+  set('lav-bien',fmt(s.prix));set('lav-terrain',tPct+' %');set('lav-amortissable',fmt(m.valeurAmort));
+  set('la-bati',fmt(m.aB));set('la-travaux',fmt(m.aT));set('la-mobilier',fmt(m.aM));set('la-frais',fmt(m.aF));set('la-total',fmt(m.aTotal));set('la-interets',fmt(s.intAn1));
+  var bSans=m.bSans,bAvec=m.bAvec,iS=m.impotSans,iA=m.impotAvec,eco=m.economie;
+  var shield=estimateShieldYears(s,bSans,m.aB,m.aT,m.aM,m.aF);
   set('la-shield','Fiscalité fortement réduite pendant '+shield+'.');set('lm-duree',shield);
 
   set('li-loyers',fmt(s.revAn));set('li-impot-sans',fmt(iS));set('li-impot-avec',fmt(iA));set('li-economie',fmt(eco));set('li-economie-mois',fmt(eco/12)+'/mois');
   set('lr-revenus',fmt(s.revAn)+'/an');set('lr-charges','−'+fmt(s.chargesAn)+'/an');
-  set('lr-interets','−'+fmt(s.intAn1)+'/an');set('lr-amort','−'+fmt(aTotal)+'/an');
+  set('lr-interets','−'+fmt(s.intAn1)+'/an');set('lr-amort','−'+fmt(m.aTotal)+'/an');
   var bEl=document.getElementById('lr-base');bEl.textContent=fmt(bAvec);bEl.className='val '+(bAvec===0?'c-green':'c-orange');
   set('lr-base-sans',fmt(bSans)+'/an');set('lr-impot-sans',fmt(iS)+'/an');
   var iAEl=document.getElementById('lr-impot-avec');iAEl.textContent=fmt(iA)+'/an';iAEl.className='val '+(iA===0?'c-green':'c-orange');
@@ -822,10 +874,10 @@ function updateLMNP(){
   set('lc-cf-sans',fmt(cfS)+'/mois');set('lc-cf-lmnp',fmt(cfL)+'/mois');set('lc-gain','+ '+fmt(gainCf)+'/mois');
   set('lm-eco-mois',fmt(eco/12)+'/mois');set('lm-gain-cf','+ '+fmt(gainCf)+'/mois');
 
-  var capital=s.mens*12-s.intAn1, cashflowLmnp=cfL*12, valorisation=s.prix*(window._sim.params.hausse||0)/100;
-  var totalWealth=capital+cashflowLmnp+eco+valorisation;
-  set('wp-capital',fmt(capital)+'/an');set('wp-cashflow',fmt(cashflowLmnp)+'/an');set('wp-economie',fmt(eco)+'/an');set('wp-valo',fmt(valorisation)+'/an');
-  set('wp-total',fmt(totalWealth)+'/an');set('wp-total-mois',fmt(totalWealth/12)+'/mois');
+  var cashflowLmnp=cfL*12;
+  set('wp-capital',fmt(m.capital)+'/an');set('wp-cashflow',fmt(cashflowLmnp)+'/an');set('wp-economie',fmt(eco)+'/an');set('wp-valo',fmt(m.valorisation)+'/an');
+  set('wp-total',fmt(m.patrimoine)+'/an');set('wp-total-mois',fmt(m.patrimoine/12)+'/mois');
+  updateSimulatorLMNPImpact();
 }
 
 function resetAll(){
