@@ -80,8 +80,9 @@
   .kpi-label{font-size:9px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--muted2);margin-bottom:6px}
   .kpi-value{font-family:var(--mono);font-size:18px;font-weight:700;line-height:1;margin-bottom:2px}
   .kpi-unit{font-size:10px;color:var(--muted2)}
-  .kpi-tooltip{display:none;position:absolute;bottom:calc(100% + 6px);left:50%;transform:translateX(-50%);width:210px;background:#1e293b;border-radius:6px;padding:8px 10px;font-size:11px;color:#cbd5e1;line-height:1.5;z-index:50;pointer-events:none;box-shadow:0 4px 12px rgba(0,0,0,.15)}
-  .kpi-card:hover .kpi-tooltip{display:block}
+  .kpi-tooltip{display:none;position:absolute;top:calc(100% + 6px);left:0;transform:none;width:230px;background:#1e293b;border-radius:6px;padding:8px 10px;font-size:11px;color:#cbd5e1;line-height:1.5;z-index:50;pointer-events:none;box-shadow:0 4px 12px rgba(0,0,0,.15)}
+  .kpi-card{cursor:help}
+  .kpi-card:hover .kpi-tooltip,.kpi-card:focus-within .kpi-tooltip{display:block}
   .c-red{color:var(--red)}.c-green{color:var(--green)}.c-orange{color:var(--orange)}.c-blue{color:var(--accent)}.c-muted{color:var(--muted)}
 
   .bottom-row{display:grid;grid-template-columns:2fr 1fr;gap:12px}
@@ -267,7 +268,7 @@
 
     <div class="panel panel-financement">
       <div class="panel-title">🏦 Financement</div>
-      <div class="field"><div class="field-label"><span>Apport</span><input type="number" class="num-input" id="n-apport" min="0" max="300000" step="5000" value="65000" oninput="syncNum('r-apport',this)"></div><input type="range" id="r-apport" min="0" max="300000" step="5000" value="65000" oninput="syncRange('r-apport');update()"></div>
+      <div class="field"><div class="field-label"><span>Apport</span><input type="number" class="num-input" id="n-apport" min="0" max="650000" step="5000" value="65000" oninput="syncNum('r-apport',this)"></div><input type="range" id="r-apport" min="0" max="650000" step="5000" value="65000" oninput="syncRange('r-apport');update()"></div>
       <div class="field"><div class="field-label"><span>Taux d'intérêt</span><input type="number" class="num-input" id="n-taux" min="0" max="6" step="0.05" value="3.5" oninput="syncNum('r-taux',this)"></div><input type="range" id="r-taux" min="0" max="6" step="0.05" value="3.5" oninput="syncRange('r-taux');update()"></div>
       <div class="field"><div class="field-label"><span>Durée du prêt</span><span id="v-duree"></span></div><input type="range" id="r-duree" min="10" max="30" step="1" value="20" oninput="update()"></div>
       <div class="calc-row"><span>Montant emprunté</span><span id="c-emprunt">—</span></div>
