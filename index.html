@@ -70,6 +70,10 @@
   .toggle input:checked+.toggle-slider{background:var(--accent)}
   .toggle input:checked+.toggle-slider::before{transform:translateX(15px)}
   .airbnb-fields{display:none}.airbnb-fields.show{display:block}
+  .field-row{display:flex;align-items:center;gap:6px;margin-bottom:4px}
+  .field-row input[type=range]{flex:1}
+  .num-input{width:66px;padding:2px 5px;border:1px solid rgba(0,0,0,.15);border-radius:4px;font-family:var(--mono);font-size:11px;font-weight:600;color:var(--text2);background:rgba(255,255,255,.7);text-align:right;outline:none}
+  .num-input:focus{border-color:var(--accent);background:white}
 
   .kpi-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:8px;margin-bottom:14px}
   .kpi-card{background:var(--white);border:1px solid var(--border);border-radius:8px;padding:12px;position:relative}
@@ -250,9 +254,9 @@
   <div class="input-row">
     <div class="panel panel-bien">
       <div class="panel-title">🏠 Bien immobilier</div>
-      <div class="field"><div class="field-label"><span>Prix d'achat</span><span id="v-prix"></span></div><input type="range" id="r-prix" min="50000" max="1000000" step="5000" value="340000" oninput="update()"></div>
-      <div class="field"><div class="field-label"><span>Surface (m²)</span><span id="v-surface"></span></div><input type="range" id="r-surface" min="10" max="200" step="1" value="65" oninput="update()"></div>
-      <div class="field"><div class="field-label"><span>Travaux</span><span id="v-travaux"></span></div><input type="range" id="r-travaux" min="0" max="100000" step="1000" value="0" oninput="update()"></div>
+      <div class="field"><div class="field-label"><span>Prix d'achat</span><span id="v-prix"></span></div><div class="field-row"><input type="range" id="r-prix" min="50000" max="1000000" step="5000" value="340000" oninput="update()"><input type="number" class="num-input" id="n-prix" min="50000" max="1000000" step="5000" value="340000" oninput="syncNum('r-prix',this)"></div></div>
+      <div class="field"><div class="field-label"><span>Surface (m²)</span><span id="v-surface"></span></div><div class="field-row"><input type="range" id="r-surface" min="10" max="200" step="1" value="65" oninput="update()"><input type="number" class="num-input" id="n-surface" min="10" max="200" step="1" value="65" oninput="syncNum('r-surface',this)"></div></div>
+      <div class="field"><div class="field-label"><span>Travaux</span><span id="v-travaux"></span></div><div class="field-row"><input type="range" id="r-travaux" min="0" max="50000" step="500" value="0" oninput="update()"><input type="number" class="num-input" id="n-travaux" min="0" max="50000" step="500" value="0" oninput="syncNum('r-travaux',this)"></div></div>
       <div class="field"><div class="field-label"><span>Frais d'agence</span><span id="v-agence"></span></div><input type="range" id="r-agence" min="0" max="8" step="0.5" value="4" oninput="update()"></div>
       <div class="field"><div class="field-label"><span>Frais de notaire</span><span id="v-notaire"></span></div><input type="range" id="r-notaire" min="2" max="9" step="0.5" value="7.5" oninput="update()"></div>
       <div class="field"><div class="field-label"><span>Hausse annuelle estimée</span><span id="v-hausse"></span></div><input type="range" id="r-hausse" min="0" max="5" step="0.1" value="1.5" oninput="update()"></div>
@@ -263,8 +267,8 @@
 
     <div class="panel panel-financement">
       <div class="panel-title">🏦 Financement</div>
-      <div class="field"><div class="field-label"><span>Apport</span><span id="v-apport"></span></div><input type="range" id="r-apport" min="0" max="300000" step="5000" value="65000" oninput="update()"></div>
-      <div class="field"><div class="field-label"><span>Taux d'intérêt</span><span id="v-taux"></span></div><input type="range" id="r-taux" min="1" max="6" step="0.05" value="3.5" oninput="update()"></div>
+      <div class="field"><div class="field-label"><span>Apport</span><span id="v-apport"></span></div><div class="field-row"><input type="range" id="r-apport" min="0" max="300000" step="5000" value="65000" oninput="update()"><input type="number" class="num-input" id="n-apport" min="0" max="300000" step="5000" value="65000" oninput="syncNum('r-apport',this)"></div></div>
+      <div class="field"><div class="field-label"><span>Taux d'intérêt</span><span id="v-taux"></span></div><div class="field-row"><input type="range" id="r-taux" min="0" max="6" step="0.05" value="3.5" oninput="update()"><input type="number" class="num-input" id="n-taux" min="0" max="6" step="0.05" value="3.5" oninput="syncNum('r-taux',this)"></div></div>
       <div class="field"><div class="field-label"><span>Durée du prêt</span><span id="v-duree"></span></div><input type="range" id="r-duree" min="10" max="30" step="1" value="20" oninput="update()"></div>
       <div class="calc-row"><span>Montant emprunté</span><span id="c-emprunt">—</span></div>
       <div class="calc-row"><span>Mensualité</span><span id="c-mensualite">—</span></div>
@@ -272,7 +276,7 @@
 
     <div class="panel panel-revenus">
       <div class="panel-title">💰 Revenus locatifs</div>
-      <div class="field"><div class="field-label"><span>Loyer mensuel (€/mois)</span><span id="v-loyer"></span></div><input type="range" id="r-loyer" min="300" max="5000" step="50" value="1500" oninput="update()"></div>
+      <div class="field"><div class="field-label"><span>Loyer mensuel (€/mois)</span><span id="v-loyer"></span></div><div class="field-row"><input type="range" id="r-loyer" min="300" max="5000" step="50" value="1500" oninput="update()"><input type="number" class="num-input" id="n-loyer" min="300" max="5000" step="50" value="1500" oninput="syncNum('r-loyer',this)"></div></div>
       <div class="field"><div class="field-label"><span>Vacance locative</span><span id="v-vacance"></span></div><input type="range" id="r-vacance" min="0" max="20" step="0.5" value="5" oninput="update()"></div>
       <div class="calc-row"><span>Revenu annuel effectif</span><span id="c-revenu">—</span></div>
       <div style="margin-top:10px">
@@ -448,6 +452,10 @@ function update(){
   set('v-loyer',fmt(loyer));set('v-vacance',pct(vacance));
   set('v-copro',fmt(copro));set('v-pno',fmt(pno));set('v-taxe',fmt(taxe));set('v-entretien',fmt(entretien));
   set('horizon-val',horizon);
+
+  // sync number inputs
+  ['prix','surface','travaux','apport','taux','loyer'].forEach(function(k){syncRange('r-'+k);});
+
 
   var fraisAg=prix*agPct/100, fraisNot=(prix+fraisAg)*notPct/100;
   var totalAcq=prix+fraisAg+fraisNot+travaux, emprunt=Math.max(0,totalAcq-apport);
@@ -723,6 +731,18 @@ function resetAll(){
   document.getElementById('l-tmi').value=30;
   if(chart){chart.destroy();chart=null;}
   update();
+}
+
+function syncNum(rangeId, numEl){
+  var r=document.getElementById(rangeId);
+  var v=parseFloat(numEl.value);
+  if(!isNaN(v)){r.value=v;update();}
+}
+function syncRange(rangeId){
+  var r=document.getElementById(rangeId);
+  var nId='n-'+rangeId.substring(2);
+  var n=document.getElementById(nId);
+  if(n) n.value=r.value;
 }
 function init(){update();}
 </script>
