@@ -1,0 +1,730 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>InvestSimul</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap');
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+  :root{
+    --bg:#f1f5f9;--white:#fff;--border:#e2e8f0;--border2:#cbd5e1;
+    --accent:#1d4ed8;--green:#15803d;--red:#dc2626;--orange:#c2410c;--gold:#b45309;
+    --text:#0f172a;--text2:#334155;--muted:#64748b;--muted2:#94a3b8;
+    --font:'Inter',sans-serif;--mono:'JetBrains Mono',monospace;
+    --blue-bg:#eff6ff;--blue-border:#bfdbfe;
+    --green-bg:#f0fdf4;--green-border:#bbf7d0;
+    --amber-bg:#fffbeb;--amber-border:#fde68a;
+    --purple-bg:#faf5ff;--purple-border:#e9d5ff;
+  }
+  body{background:var(--bg);color:var(--text);font-family:var(--font);font-size:14px;min-height:100vh}
+
+  nav{display:flex;align-items:center;justify-content:space-between;padding:0 24px;height:52px;background:var(--white);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100}
+  .nav-brand{font-weight:700;font-size:15px;letter-spacing:-0.02em;color:var(--text)}
+  .nav-brand span{color:var(--accent)}
+  .nav-tabs{display:flex;gap:2px}
+  .nav-tab{padding:5px 14px;border-radius:6px;border:none;cursor:pointer;font-family:var(--font);font-size:13px;font-weight:500;transition:all .12s;background:transparent;color:var(--muted)}
+  .nav-tab.active{background:var(--accent);color:#fff}
+  .nav-tab:not(.active):hover{background:var(--bg);color:var(--text2)}
+  .nav-right{display:flex;gap:8px;align-items:center}
+  .btn-save{padding:5px 14px;border-radius:6px;border:none;background:var(--green);color:#fff;cursor:pointer;font-family:var(--font);font-size:12px;font-weight:600}
+  .btn-save:hover{background:#166534}
+  .btn-reset{padding:5px 12px;border-radius:6px;border:1px solid var(--border2);background:transparent;color:var(--muted);cursor:pointer;font-family:var(--font);font-size:12px}
+  .btn-reset:hover{background:var(--bg);color:var(--text2)}
+
+  .page{display:none}.page.active{display:block}
+  .sim-layout{padding:20px 24px;max-width:1400px;margin:0 auto}
+
+  .input-row{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:12px;margin-bottom:16px}
+  .panel{border-radius:10px;padding:16px 18px}
+  .panel-bien{background:var(--blue-bg);border:1px solid var(--blue-border)}
+  .panel-financement{background:var(--green-bg);border:1px solid var(--green-border)}
+  .panel-revenus{background:var(--amber-bg);border:1px solid var(--amber-border)}
+  .panel-charges{background:var(--purple-bg);border:1px solid var(--purple-border)}
+  .panel-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid rgba(0,0,0,.07)}
+  .panel-bien .panel-title{color:#1e40af}
+  .panel-financement .panel-title{color:#166534}
+  .panel-revenus .panel-title{color:#92400e}
+  .panel-charges .panel-title{color:#6b21a8}
+
+  .field{margin-bottom:10px}
+  .field-label{display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;font-size:11px;color:var(--muted)}
+  .field-label span:last-child{font-family:var(--mono);font-size:11px;font-weight:600;color:var(--text2)}
+  input[type=range]{width:100%;height:3px;-webkit-appearance:none;appearance:none;background:rgba(0,0,0,.12);border-radius:2px;outline:none;cursor:pointer}
+  input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:13px;height:13px;background:var(--accent);border-radius:50%;border:2px solid white;box-shadow:0 0 0 1px var(--border2)}
+  .panel-financement input[type=range]::-webkit-slider-thumb{background:#15803d}
+  .panel-revenus input[type=range]::-webkit-slider-thumb{background:#92400e}
+  .panel-charges input[type=range]::-webkit-slider-thumb{background:#7e22ce}
+  .calc-row{display:flex;justify-content:space-between;padding:4px 8px;background:rgba(255,255,255,.6);border-radius:5px;font-size:11px;color:var(--muted);margin-bottom:5px}
+  .calc-row span:last-child{font-family:var(--mono);font-weight:600;font-size:11px}
+  .panel-bien .calc-row span:last-child{color:#1e40af}
+  .panel-financement .calc-row span:last-child{color:#166534}
+  .panel-revenus .calc-row span:last-child{color:#92400e}
+  .panel-charges .calc-row span:last-child{color:#6b21a8}
+  .total-charges{font-size:10px;color:var(--muted);padding:4px 8px;background:rgba(255,255,255,.6);border-radius:5px;margin-top:2px;font-family:var(--mono)}
+  .toggle-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;font-size:11px;color:var(--muted)}
+  .toggle{position:relative;width:32px;height:17px}
+  .toggle input{display:none}
+  .toggle-slider{position:absolute;inset:0;background:var(--border2);border-radius:9px;cursor:pointer;transition:.2s}
+  .toggle-slider::before{content:'';position:absolute;width:11px;height:11px;top:3px;left:3px;background:white;border-radius:50%;transition:.2s;box-shadow:0 1px 2px rgba(0,0,0,.2)}
+  .toggle input:checked+.toggle-slider{background:var(--accent)}
+  .toggle input:checked+.toggle-slider::before{transform:translateX(15px)}
+  .airbnb-fields{display:none}.airbnb-fields.show{display:block}
+
+  .kpi-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:8px;margin-bottom:14px}
+  .kpi-card{background:var(--white);border:1px solid var(--border);border-radius:8px;padding:12px;position:relative}
+  .kpi-label{font-size:9px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--muted2);margin-bottom:6px}
+  .kpi-value{font-family:var(--mono);font-size:18px;font-weight:700;line-height:1;margin-bottom:2px}
+  .kpi-unit{font-size:10px;color:var(--muted2)}
+  .kpi-tooltip{display:none;position:absolute;bottom:calc(100% + 6px);left:50%;transform:translateX(-50%);width:210px;background:#1e293b;border-radius:6px;padding:8px 10px;font-size:11px;color:#cbd5e1;line-height:1.5;z-index:50;pointer-events:none;box-shadow:0 4px 12px rgba(0,0,0,.15)}
+  .kpi-card:hover .kpi-tooltip{display:block}
+  .c-red{color:var(--red)}.c-green{color:var(--green)}.c-orange{color:var(--orange)}.c-blue{color:var(--accent)}.c-muted{color:var(--muted)}
+
+  .bottom-row{display:grid;grid-template-columns:2fr 1fr;gap:12px}
+  .card{border-radius:10px;padding:18px 20px}
+  .card-graph{background:var(--green-bg);border:1px solid var(--green-border)}
+  .card-decomp{background:var(--amber-bg);border:1px solid var(--amber-border)}
+  .card-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;flex-wrap:wrap;gap:8px}
+  .card-title{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.06em}
+  .card-graph .card-title{color:#166534}
+  .card-decomp .card-title{color:#92400e}
+  .graph-controls{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+  .horizon-label{font-size:11px;color:var(--muted)}
+  .horizon-label span{color:var(--accent);font-weight:600;font-family:var(--mono)}
+  .toggle-enrich{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--muted);cursor:pointer}
+  .dot{display:inline-block;width:7px;height:7px;border-radius:50%;margin-right:3px}
+  .chart-wrap{position:relative;width:100%;height:220px}
+  .decomp-stack{display:flex;flex-direction:column;gap:12px}
+  .decomp-item label{display:block;font-size:10px;text-transform:uppercase;letter-spacing:.07em;color:var(--muted2);margin-bottom:3px}
+  .decomp-item .val{font-family:var(--mono);font-size:20px;font-weight:700}
+  .decomp-item .sub{font-size:10px;color:var(--muted);margin-top:1px}
+  .progress-bar{height:6px;background:rgba(0,0,0,.08);border-radius:3px;overflow:hidden;margin-top:10px}
+  .progress-fill{height:100%;border-radius:3px;background:linear-gradient(90deg,var(--red) var(--pct),var(--green) var(--pct))}
+  .progress-legend{display:flex;justify-content:space-between;font-size:10px;color:var(--muted2);margin-top:5px}
+
+  /* MODAL SAVE */
+  .modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:200;align-items:center;justify-content:center}
+  .modal-overlay.show{display:flex}
+  .modal{background:var(--white);border-radius:12px;padding:24px;width:460px;max-width:95vw;box-shadow:0 20px 60px rgba(0,0,0,.2)}
+  .modal h3{font-size:15px;font-weight:700;margin-bottom:18px;color:var(--text)}
+  .modal-field{margin-bottom:14px}
+  .modal-field label{display:block;font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.07em;margin-bottom:5px}
+  .modal-field input,.modal-field textarea{width:100%;padding:8px 10px;border:1px solid var(--border2);border-radius:6px;font-family:var(--font);font-size:13px;color:var(--text);background:var(--white);outline:none}
+  .modal-field input:focus,.modal-field textarea:focus{border-color:var(--accent)}
+  .modal-field textarea{resize:vertical;min-height:70px}
+  .modal-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:18px}
+  .btn-cancel{padding:7px 16px;border-radius:6px;border:1px solid var(--border2);background:transparent;color:var(--muted);cursor:pointer;font-family:var(--font);font-size:13px}
+  .btn-confirm{padding:7px 16px;border-radius:6px;border:none;background:var(--accent);color:white;cursor:pointer;font-family:var(--font);font-size:13px;font-weight:600}
+  .btn-confirm:disabled{opacity:.5;cursor:not-allowed}
+
+  /* PAGE COMPARATIF */
+  .comp-layout{padding:24px;max-width:1400px;margin:0 auto}
+  .comp-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px}
+  .comp-header h2{font-size:18px;font-weight:700}
+  .comp-status{font-size:12px;color:var(--muted);font-style:italic}
+  .btn-refresh{padding:6px 14px;border-radius:6px;border:1px solid var(--border2);background:var(--white);color:var(--text2);cursor:pointer;font-family:var(--font);font-size:12px}
+  .btn-refresh:hover{background:var(--bg)}
+
+  .sim-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:16px}
+  .sim-card{background:var(--white);border:1px solid var(--border);border-radius:12px;padding:18px;position:relative}
+  .sim-card:hover{border-color:var(--border2);box-shadow:0 2px 12px rgba(0,0,0,.06)}
+  .sim-card-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px}
+  .sim-name{font-size:14px;font-weight:700;color:var(--text)}
+  .sim-author{font-size:11px;color:var(--muted);margin-top:2px}
+  .sim-date{font-size:10px;color:var(--muted2)}
+  .sim-kpis{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:12px}
+  .sim-kpi{background:var(--bg);border-radius:6px;padding:8px 10px}
+  .sim-kpi-label{font-size:9px;text-transform:uppercase;letter-spacing:.07em;color:var(--muted2);margin-bottom:3px}
+  .sim-kpi-val{font-family:var(--mono);font-size:14px;font-weight:700}
+  .sim-link{display:block;font-size:11px;color:var(--accent);text-decoration:none;margin-bottom:8px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .sim-link:hover{text-decoration:underline}
+  .sim-comment{font-size:12px;color:var(--text2);line-height:1.5;padding:8px 10px;background:var(--bg);border-radius:6px;margin-bottom:10px}
+  .sim-params{font-size:10px;color:var(--muted);line-height:1.8}
+  .btn-load{padding:5px 12px;border-radius:5px;border:1px solid var(--accent);color:var(--accent);background:transparent;cursor:pointer;font-family:var(--font);font-size:11px;font-weight:600}
+  .btn-load:hover{background:var(--blue-bg)}
+  .btn-delete{padding:5px 10px;border-radius:5px;border:1px solid #fee2e2;color:var(--red);background:transparent;cursor:pointer;font-family:var(--font);font-size:11px}
+  .btn-delete:hover{background:#fef2f2}
+  .sim-actions{display:flex;gap:6px;margin-top:10px}
+
+  .empty-state{text-align:center;padding:60px 20px;color:var(--muted)}
+  .empty-state .icon{font-size:48px;margin-bottom:12px}
+  .empty-state p{font-size:14px}
+
+  .toast{position:fixed;bottom:24px;right:24px;background:#1e293b;color:white;padding:10px 18px;border-radius:8px;font-size:13px;z-index:300;opacity:0;transition:opacity .3s;pointer-events:none}
+  .toast.show{opacity:1}
+
+  /* LMNP */
+  .lmnp-layout{max-width:900px;margin:0 auto;padding:24px}
+  .info-card{background:var(--white);border:1px solid var(--border);border-left:3px solid var(--gold);border-radius:10px;padding:20px 22px;margin-bottom:14px}
+  .info-card h2{font-size:14px;font-weight:700;color:var(--gold);margin-bottom:10px}
+  .info-card p{font-size:12px;color:var(--text2);line-height:1.7;margin-bottom:8px}
+  .info-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}
+  .info-box{background:var(--bg);border-radius:7px;padding:12px 14px}
+  .info-box h4{font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--gold);margin-bottom:8px;font-weight:600}
+  .info-box ul{list-style:none}
+  .info-box ul li{font-size:12px;color:var(--text2);padding:2px 0 2px 12px;position:relative;line-height:1.5}
+  .info-box ul li::before{content:'·';position:absolute;left:3px;color:var(--muted2)}
+  .lmnp-calc{background:var(--white);border:1px solid var(--border);border-radius:10px;padding:20px 22px;margin-bottom:14px}
+  .lmnp-calc h3{font-size:13px;font-weight:600;color:var(--text2);margin-bottom:16px}
+  .lmnp-inputs{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:18px}
+  .amort-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:18px}
+  .amort-item{background:var(--bg);border-radius:7px;padding:10px 12px}
+  .amort-item label{font-size:10px;text-transform:uppercase;letter-spacing:.07em;color:var(--muted2);display:block;margin-bottom:3px}
+  .amort-item .val{font-family:var(--mono);font-size:14px;font-weight:700;color:var(--text2)}
+  .amort-item .sub{font-size:10px;color:var(--muted2)}
+  .amort-item.hl-gold{border:1px solid #fcd34d;background:#fffbeb}
+  .amort-item.hl-gold .val{color:var(--gold)}
+  .lmnp-results{background:var(--bg);border-radius:8px;padding:14px 16px}
+  .lmnp-results h4{font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted2);margin-bottom:10px;font-weight:600}
+  .result-row{display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid var(--border);font-size:12px}
+  .result-row:last-child{border-bottom:none}
+  .result-row .label{color:var(--muted)}
+  .result-row .val{font-family:var(--mono);font-weight:600;font-size:12px}
+  .result-row.hl{padding:10px 12px;margin:6px -12px;background:#f0fdf4;border-radius:7px;border-bottom:none}
+  .result-row.hl .label{color:var(--green);font-weight:600;font-size:13px}
+  .result-row.hl .val{color:var(--green);font-size:15px}
+  .tmi-select{background:var(--white);border:1px solid var(--border2);color:var(--text2);padding:6px 10px;border-radius:6px;font-family:var(--font);font-size:12px;width:100%;margin-top:5px;outline:none;cursor:pointer}
+  .lmnp-note{font-size:11px;color:var(--muted);font-style:italic;margin-top:12px;padding:10px 12px;background:var(--bg);border-radius:6px;line-height:1.6;border-left:2px solid var(--border2)}
+
+  @media(max-width:1100px){.input-row{grid-template-columns:1fr 1fr}.bottom-row{grid-template-columns:1fr}}
+  @media(max-width:700px){.input-row{grid-template-columns:1fr}.kpi-grid{grid-template-columns:repeat(2,1fr)}.lmnp-inputs{grid-template-columns:1fr}.info-grid{grid-template-columns:1fr}.amort-grid{grid-template-columns:1fr 1fr}}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-brand">Invest<span>Simul</span></div>
+  <div class="nav-tabs">
+    <button class="nav-tab active" onclick="showPage('simulateur',this)">Simulateur</button>
+    <button class="nav-tab" onclick="showPage('comparatif',this)">📁 Mes simulations</button>
+    <button class="nav-tab" onclick="showPage('lmnp',this)">Régime LMNP</button>
+  </div>
+  <div class="nav-right">
+    <button class="btn-save" onclick="openSaveModal()">💾 Sauvegarder</button>
+    <button class="btn-reset" onclick="resetAll()">↺ Réinitialiser</button>
+  </div>
+</nav>
+
+<!-- MODAL SAUVEGARDE -->
+<div class="modal-overlay" id="modal-overlay">
+  <div class="modal">
+    <h3>💾 Sauvegarder cette simulation</h3>
+    <div class="modal-field">
+      <label>Votre prénom *</label>
+      <input type="text" id="m-prenom" placeholder="ex : Pierre-Louis" maxlength="40">
+    </div>
+    <div class="modal-field">
+      <label>Nom du bien *</label>
+      <input type="text" id="m-nom" placeholder="ex : Charenton T2 rue de Paris" maxlength="80">
+    </div>
+    <div class="modal-field">
+      <label>Lien de l'annonce</label>
+      <input type="url" id="m-lien" placeholder="https://www.seloger.com/...">
+    </div>
+    <div class="modal-field">
+      <label>Commentaire</label>
+      <textarea id="m-commentaire" placeholder="ex : Beau standing, proche métro, à négocier..."></textarea>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeModal()">Annuler</button>
+      <button class="btn-confirm" id="btn-confirm-save" onclick="saveSimulation()">Sauvegarder</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<!-- ===== SIMULATEUR ===== -->
+<div id="page-simulateur" class="page active">
+<div class="sim-layout">
+
+  <div class="kpi-grid">
+    <div class="kpi-card"><div class="kpi-tooltip">Loyers − charges − mensualité. Peut être négatif même sur un bon investissement.</div><div class="kpi-label">Cash-flow mensuel</div><div class="kpi-value" id="kpi-cashflow">—</div><div class="kpi-unit">€/mois</div></div>
+    <div class="kpi-card"><div class="kpi-tooltip">Ce que vous sortez de votre poche chaque mois en complément des loyers.</div><div class="kpi-label">Effort d'épargne</div><div class="kpi-value" id="kpi-effort">—</div><div class="kpi-unit">€/mois</div></div>
+    <div class="kpi-card"><div class="kpi-tooltip">Capital remboursé + plus-value estimée + cash-flow. Votre création de richesse réelle chaque mois.</div><div class="kpi-label">Enrichissement mensuel</div><div class="kpi-value c-green" id="kpi-enrichissement">—</div><div class="kpi-unit">€/mois</div></div>
+    <div class="kpi-card"><div class="kpi-tooltip">Loyers annuels / Prix × 100. Avant charges et financement.</div><div class="kpi-label">Rendement brut</div><div class="kpi-value c-blue" id="kpi-rdt-brut">—</div><div class="kpi-unit">% / an</div></div>
+    <div class="kpi-card"><div class="kpi-tooltip">Loyers − charges / (Prix + frais + travaux) × 100. Hors financement.</div><div class="kpi-label">Rendement net</div><div class="kpi-value c-blue" id="kpi-rdt-net">—</div><div class="kpi-unit">% / an</div></div>
+    <div class="kpi-card"><div class="kpi-tooltip">Prix d'achat divisé par la surface.</div><div class="kpi-label">Prix / m²</div><div class="kpi-value c-muted" id="kpi-prix-m2">—</div><div class="kpi-unit">€/m²</div></div>
+  </div>
+
+  <div class="input-row">
+    <div class="panel panel-bien">
+      <div class="panel-title">🏠 Bien immobilier</div>
+      <div class="field"><div class="field-label"><span>Prix d'achat</span><span id="v-prix"></span></div><input type="range" id="r-prix" min="50000" max="1000000" step="5000" value="340000" oninput="update()"></div>
+      <div class="field"><div class="field-label"><span>Surface (m²)</span><span id="v-surface"></span></div><input type="range" id="r-surface" min="10" max="200" step="1" value="65" oninput="update()"></div>
+      <div class="field"><div class="field-label"><span>Travaux</span><span id="v-travaux"></span></div><input type="range" id="r-travaux" min="0" max="100000" step="1000" value="0" oninput="update()"></div>
+      <div class="field"><div class="field-label"><span>Frais d'agence</span><span id="v-agence"></span></div><input type="range" id="r-agence" min="0" max="8" step="0.5" value="4" oninput="update()"></div>
+      <div class="field"><div class="field-label"><span>Frais de notaire</span><span id="v-notaire"></span></div><input type="range" id="r-notaire" min="2" max="9" step="0.5" value="7.5" oninput="update()"></div>
+      <div class="field"><div class="field-label"><span>Hausse annuelle estimée</span><span id="v-hausse"></span></div><input type="range" id="r-hausse" min="0" max="5" step="0.1" value="1.5" oninput="update()"></div>
+      <div class="calc-row"><span>Frais d'agence</span><span id="c-agence">—</span></div>
+      <div class="calc-row"><span>Frais de notaire</span><span id="c-notaire">—</span></div>
+      <div class="calc-row"><span>Coût total</span><span id="c-total-acq">—</span></div>
+    </div>
+
+    <div class="panel panel-financement">
+      <div class="panel-title">🏦 Financement</div>
+      <div class="field"><div class="field-label"><span>Apport</span><span id="v-apport"></span></div><input type="range" id="r-apport" min="0" max="300000" step="5000" value="65000" oninput="update()"></div>
+      <div class="field"><div class="field-label"><span>Taux d'intérêt</span><span id="v-taux"></span></div><input type="range" id="r-taux" min="1" max="6" step="0.05" value="3.5" oninput="update()"></div>
+      <div class="field"><div class="field-label"><span>Durée du prêt</span><span id="v-duree"></span></div><input type="range" id="r-duree" min="10" max="30" step="1" value="20" oninput="update()"></div>
+      <div class="calc-row"><span>Montant emprunté</span><span id="c-emprunt">—</span></div>
+      <div class="calc-row"><span>Mensualité</span><span id="c-mensualite">—</span></div>
+    </div>
+
+    <div class="panel panel-revenus">
+      <div class="panel-title">💰 Revenus locatifs</div>
+      <div class="field"><div class="field-label"><span>Loyer mensuel (€/mois)</span><span id="v-loyer"></span></div><input type="range" id="r-loyer" min="300" max="5000" step="50" value="1500" oninput="update()"></div>
+      <div class="field"><div class="field-label"><span>Vacance locative</span><span id="v-vacance"></span></div><input type="range" id="r-vacance" min="0" max="20" step="0.5" value="5" oninput="update()"></div>
+      <div class="calc-row"><span>Revenu annuel effectif</span><span id="c-revenu">—</span></div>
+      <div style="margin-top:10px">
+        <div class="toggle-row"><span>Option Airbnb</span><label class="toggle"><input type="checkbox" id="toggle-airbnb" onchange="toggleAirbnb()"><span class="toggle-slider"></span></label></div>
+        <div class="airbnb-fields" id="airbnb-fields">
+          <div class="field"><div class="field-label"><span>Nuits louées (nuits/an)</span><span id="v-nuits"></span></div><input type="range" id="r-nuits" min="0" max="365" step="5" value="60" oninput="update()"></div>
+          <div class="field"><div class="field-label"><span>Tarif par nuit (€)</span><span id="v-tarif"></span></div><input type="range" id="r-tarif" min="20" max="500" step="5" value="80" oninput="update()"></div>
+          <div class="field"><div class="field-label"><span>Commission plateforme</span><span id="v-commission"></span></div><input type="range" id="r-commission" min="0" max="25" step="0.5" value="15" oninput="update()"></div>
+          <div class="calc-row"><span>Revenu Airbnb annuel</span><span id="c-airbnb">—</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel panel-charges">
+      <div class="panel-title">📋 Charges (€/an)</div>
+      <div class="field"><div class="field-label"><span>Copropriété (€/an)</span><span id="v-copro"></span></div><input type="range" id="r-copro" min="0" max="6000" step="100" value="1200" oninput="update()"></div>
+      <div class="field"><div class="field-label"><span>Assurance PNO (€/an)</span><span id="v-pno"></span></div><input type="range" id="r-pno" min="0" max="1500" step="50" value="300" oninput="update()"></div>
+      <div class="field"><div class="field-label"><span>Taxe foncière (€/an)</span><span id="v-taxe"></span></div><input type="range" id="r-taxe" min="0" max="5000" step="100" value="800" oninput="update()"></div>
+      <div class="field"><div class="field-label"><span>Entretien estimé (€/an)</span><span id="v-entretien"></span></div><input type="range" id="r-entretien" min="0" max="3000" step="100" value="500" oninput="update()"></div>
+      <div class="total-charges" id="total-charges">Total : — €/an soit — €/mois</div>
+    </div>
+  </div>
+
+  <div class="bottom-row">
+    <div class="card card-graph">
+      <div class="card-header">
+        <div class="card-title">Projection patrimoniale</div>
+        <div class="graph-controls">
+          <label class="toggle-enrich"><input type="checkbox" id="toggle-enrich-curve" onchange="toggleEnrich()"><span class="dot" style="background:#b45309"></span>Enrichissement cumulé</label>
+          <div class="horizon-label">Horizon : <span id="horizon-val">25</span> ans</div>
+          <input type="range" id="r-horizon" min="5" max="30" step="1" value="25" oninput="update()" style="width:70px">
+        </div>
+      </div>
+      <div class="chart-wrap"><canvas id="myChart"></canvas></div>
+    </div>
+    <div class="card card-decomp">
+      <div class="card-header"><div class="card-title">Mensualité — année 1</div></div>
+      <div class="decomp-stack">
+        <div class="decomp-item"><label>Mensualité totale</label><div class="val c-blue" id="d-mensualite">—</div><div class="sub">€/mois</div></div>
+        <div class="decomp-item"><label><span class="dot" style="background:var(--red)"></span>Intérêts</label><div class="val c-red" id="d-interets">—</div><div class="sub">€/mois — coût réel</div></div>
+        <div class="decomp-item"><label><span class="dot" style="background:var(--green)"></span>Capital remboursé</label><div class="val c-green" id="d-capital">—</div><div class="sub">€/mois — épargne forcée</div></div>
+      </div>
+      <div class="progress-bar"><div class="progress-fill" id="progress-fill" style="--pct:50%"></div></div>
+      <div class="progress-legend"><span><span class="dot" style="background:var(--red)"></span>Intérêts</span><span style="font-style:italic;font-size:9px">Part capital ↑ chaque année</span><span><span class="dot" style="background:var(--green)"></span>Capital</span></div>
+    </div>
+  </div>
+
+</div>
+</div>
+
+<!-- ===== COMPARATIF ===== -->
+<div id="page-comparatif" class="page">
+<div class="comp-layout">
+  <div class="comp-header">
+    <div>
+      <h2>📁 Simulations sauvegardées</h2>
+      <div class="comp-status" id="comp-status">Chargement...</div>
+    </div>
+    <button class="btn-refresh" onclick="loadSimulations()">↺ Actualiser</button>
+  </div>
+  <div class="sim-grid" id="sim-grid">
+    <div class="empty-state"><div class="icon">📭</div><p>Aucune simulation sauvegardée</p></div>
+  </div>
+</div>
+</div>
+
+<!-- ===== LMNP ===== -->
+<div id="page-lmnp" class="page">
+  <div class="lmnp-layout">
+    <div class="info-card">
+      <h2>Qu'est-ce que le LMNP ?</h2>
+      <p>Le <strong>LMNP (Loueur Meublé Non Professionnel)</strong> est un régime fiscal français permettant aux propriétaires de biens <strong>meublés</strong> de déduire l'amortissement comptable du bien de leurs revenus locatifs — ce qui réduit, voire annule, l'impôt pendant de nombreuses années.</p>
+      <p><strong>Le principe clé :</strong> un bien à 340 000 € s'amortit sur ~30 ans, soit ~9 000 €/an déductibles. Si vos loyers nets sont dans cette fourchette, votre base imposable tombe à zéro — vous ne payez aucun impôt sur vos loyers pendant 10 à 15 ans.</p>
+      <div class="info-grid">
+        <div class="info-box"><h4>Conditions</h4><ul><li>Bien loué meublé (liste légale obligatoire)</li><li>Recettes &lt; 23 000 €/an ou &lt; 50% revenus globaux</li><li>Régime "réel" obligatoire pour amortir</li><li>Déclaration P0i à déposer au démarrage</li></ul></div>
+        <div class="info-box"><h4>Ce que vous amortissez</h4><ul><li>Bâti (hors terrain) : 30–40 ans</li><li>Travaux : 10–15 ans</li><li>Mobilier : 5–7 ans</li><li>Frais d'acquisition : durée du prêt</li></ul></div>
+        <div class="info-box"><h4>Limites</h4><ul><li>L'amortissement ne crée pas de déficit</li><li>Amortissements non utilisés reportables</li><li>Pas de taxation sur amortissements à la revente</li><li>Expert-comptable nécessaire (600–1 200 €/an)</li></ul></div>
+        <div class="info-box"><h4>LMNP vs Location nue</h4><ul><li>Location nue : déficit foncier limité à 10 700 €/an</li><li>LMNP : amortissement illimité + report possible</li><li>LMNP : loyer souvent 10–20% plus élevé</li><li>LMNP : turn-over locatif plus fréquent</li></ul></div>
+      </div>
+    </div>
+    <div class="lmnp-calc">
+      <h3>Calculateur LMNP — basé sur votre simulation</h3>
+      <div class="lmnp-inputs">
+        <div>
+          <div class="field"><div class="field-label"><span>Part du terrain dans le prix</span><span id="lv-terrain">15 %</span></div><input type="range" id="lr-terrain" min="5" max="35" step="1" value="15" oninput="updateLMNP()"><div style="font-size:10px;color:var(--muted2);margin-top:3px">Le terrain ne s'amortit pas</div></div>
+          <div class="field"><div class="field-label"><span>Valeur du mobilier</span><span id="lv-mobilier">5 000 €</span></div><input type="range" id="lr-mobilier" min="0" max="30000" step="500" value="5000" oninput="updateLMNP()"></div>
+        </div>
+        <div>
+          <div class="field" style="margin-bottom:12px"><div class="field-label" style="margin-bottom:5px"><span>Tranche marginale d'imposition (TMI)</span></div><select class="tmi-select" id="l-tmi" onchange="updateLMNP()"><option value="0">0 % — non imposable</option><option value="11">11 %</option><option value="30" selected>30 %</option><option value="41">41 %</option><option value="45">45 %</option></select></div>
+          <div style="font-size:11px;color:var(--muted);padding:8px 10px;background:var(--bg);border-radius:6px;line-height:1.6">Les prélèvements sociaux (17,2 %) s'ajoutent à la TMI.</div>
+        </div>
+      </div>
+      <div style="font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--muted2);margin-bottom:8px">Amortissements annuels</div>
+      <div class="amort-grid">
+        <div class="amort-item"><label>Bâti (30 ans)</label><div class="val" id="la-bati">—</div><div class="sub">€/an</div></div>
+        <div class="amort-item"><label>Travaux (15 ans)</label><div class="val" id="la-travaux">—</div><div class="sub">€/an</div></div>
+        <div class="amort-item"><label>Mobilier (7 ans)</label><div class="val" id="la-mobilier">—</div><div class="sub">€/an</div></div>
+        <div class="amort-item"><label>Frais acquisition</label><div class="val" id="la-frais">—</div><div class="sub">€/an</div></div>
+        <div class="amort-item hl-gold"><label>Total amortissement</label><div class="val" id="la-total">—</div><div class="sub">€/an</div></div>
+        <div class="amort-item"><label>Intérêts déductibles an 1</label><div class="val" id="la-interets">—</div><div class="sub">€/an</div></div>
+      </div>
+      <div class="lmnp-results">
+        <h4>Résultats fiscaux — année 1</h4>
+        <div class="result-row"><span class="label">Revenus locatifs bruts</span><span class="val c-blue" id="lr-revenus">—</span></div>
+        <div class="result-row"><span class="label">− Charges déductibles</span><span class="val c-red" id="lr-charges">—</span></div>
+        <div class="result-row"><span class="label">− Intérêts d'emprunt</span><span class="val c-red" id="lr-interets">—</span></div>
+        <div class="result-row"><span class="label">− Amortissement total</span><span class="val c-red" id="lr-amort">—</span></div>
+        <div class="result-row" style="border-top:1px solid var(--border2);margin-top:2px;padding-top:8px"><span class="label" style="color:var(--text2);font-weight:600">= Base imposable LMNP</span><span class="val" id="lr-base">—</span></div>
+        <div class="result-row"><span class="label">Base imposable sans LMNP</span><span class="val c-orange" id="lr-base-sans">—</span></div>
+        <div class="result-row"><span class="label">Impôt + PS sans LMNP</span><span class="val c-red" id="lr-impot-sans">—</span></div>
+        <div class="result-row"><span class="label">Impôt + PS avec LMNP</span><span class="val" id="lr-impot-avec">—</span></div>
+        <div class="result-row hl"><span class="label">Économie fiscale annuelle</span><span class="val" id="lr-economie">—</span></div>
+        <div class="result-row"><span class="label">Cash-flow après impôt (LMNP)</span><span class="val" id="lr-cf-lmnp">—</span></div>
+        <div class="result-row"><span class="label">Cash-flow après impôt (sans LMNP)</span><span class="val c-red" id="lr-cf-sans">—</span></div>
+      </div>
+      <div class="lmnp-note">Ces calculs sont des estimations indicatives. La mise en place du LMNP nécessite un expert-comptable spécialisé (~600–1 200 €/an, déductible).</div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ─── CONFIG JSONBIN ───
+var JSONBIN_KEY = '$2a$10$lLu6NTKnfYsS2NJbXATe6O6M52dY6fpKCUzPsm1/bEusaWhGyQ5w6';
+var BIN_ID = null; // sera créé automatiquement au premier save
+
+// ─── CHART ───
+(function(){
+  var s=document.createElement('script');
+  s.src='https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js';
+  s.onload=function(){init();};
+  document.head.appendChild(s);
+})();
+
+var chart=null, pendingData=null;
+var DEFAULTS={prix:340000,surface:65,travaux:0,agence:4,notaire:7.5,hausse:1.5,apport:65000,taux:3.5,duree:20,loyer:1500,vacance:5,copro:1200,pno:300,taxe:800,entretien:500,nuits:60,tarif:80,commission:15,horizon:25};
+
+function fmt(n){return Math.round(n).toLocaleString('fr-FR')+' €';}
+function pct(n){return n.toFixed(1).replace('.',',')+' %';}
+function get(id){return parseFloat(document.getElementById(id).value);}
+function set(id,v){var el=document.getElementById(id);if(el)el.textContent=v;}
+
+function showToast(msg, dur){
+  var t=document.getElementById('toast');
+  t.textContent=msg;t.classList.add('show');
+  setTimeout(function(){t.classList.remove('show');},dur||2500);
+}
+
+function showPage(id,btn){
+  document.querySelectorAll('.page').forEach(function(p){p.classList.remove('active');});
+  document.querySelectorAll('.nav-tab').forEach(function(t){t.classList.remove('active');});
+  document.getElementById('page-'+id).classList.add('active');
+  btn.classList.add('active');
+  if(id==='simulateur'&&pendingData){drawChart(pendingData);pendingData=null;}
+  if(id==='comparatif'){loadSimulations();}
+}
+
+function toggleAirbnb(){document.getElementById('airbnb-fields').classList.toggle('show',document.getElementById('toggle-airbnb').checked);update();}
+function toggleEnrich(){if(chart){chart.data.datasets[3].hidden=!document.getElementById('toggle-enrich-curve').checked;chart.update();}}
+function calcPMT(r,n,pv){return r===0?pv/n:pv*r/(1-Math.pow(1+r,-n));}
+function capRestant(m,tm,tot,an){var n=an*12;if(n>=tot)return 0;return m*(Math.pow(1+tm,tot)-Math.pow(1+tm,n))/(Math.pow(1+tm,tot)-1);}
+
+function update(){
+  var prix=get('r-prix'),surface=get('r-surface'),travaux=get('r-travaux'),
+    agPct=get('r-agence'),notPct=get('r-notaire'),hausse=get('r-hausse'),
+    apport=get('r-apport'),taux=get('r-taux'),duree=get('r-duree'),
+    loyer=get('r-loyer'),vacance=get('r-vacance'),
+    copro=get('r-copro'),pno=get('r-pno'),taxe=get('r-taxe'),entretien=get('r-entretien'),
+    horizon=get('r-horizon');
+
+  set('v-prix',fmt(prix));set('v-surface',surface+' m²');set('v-travaux',fmt(travaux));
+  set('v-agence',pct(agPct));set('v-notaire',pct(notPct));set('v-hausse',pct(hausse));
+  set('v-apport',fmt(apport));set('v-taux',pct(taux));set('v-duree',duree+' ans');
+  set('v-loyer',fmt(loyer));set('v-vacance',pct(vacance));
+  set('v-copro',fmt(copro));set('v-pno',fmt(pno));set('v-taxe',fmt(taxe));set('v-entretien',fmt(entretien));
+  set('horizon-val',horizon);
+
+  var fraisAg=prix*agPct/100, fraisNot=(prix+fraisAg)*notPct/100;
+  var totalAcq=prix+fraisAg+fraisNot+travaux, emprunt=Math.max(0,totalAcq-apport);
+  var tm=taux/100/12, totMois=duree*12, mens=calcPMT(tm,totMois,emprunt);
+
+  set('c-agence',fmt(fraisAg));set('c-notaire',fmt(fraisNot));set('c-total-acq',fmt(totalAcq));
+  set('c-emprunt',fmt(emprunt));set('c-mensualite',fmt(mens)+'/mois');
+
+  var chargesAn=copro+pno+taxe+entretien, revAn=loyer*12*(1-vacance/100);
+  if(document.getElementById('toggle-airbnb').checked){
+    var nuits=get('r-nuits'),tarif=get('r-tarif'),comm=get('r-commission');
+    set('v-nuits',nuits+' nuits');set('v-tarif',fmt(tarif));set('v-commission',pct(comm));
+    var revAir=nuits*tarif*(1-comm/100);set('c-airbnb',fmt(revAir)+'/an');revAn+=revAir;
+  }
+  set('c-revenu',fmt(revAn)+'/an');
+  set('total-charges','Total : '+fmt(chargesAn)+'/an soit '+fmt(chargesAn/12)+'/mois');
+
+  var cfAn=revAn-chargesAn-mens*12, cfM=cfAn/12;
+  var intAn1=emprunt*tm, capAn1=mens-intAn1;
+  var effort=Math.max(0,-cfM), enrich=capAn1+(prix*hausse/100/12)+cfM;
+  var rdtB=(loyer*12)/prix*100, rdtN=(revAn-chargesAn)/(prix+fraisNot+travaux)*100;
+
+  var cfEl=document.getElementById('kpi-cashflow');
+  cfEl.textContent=fmt(cfM);cfEl.className='kpi-value '+(cfM>=0?'c-green':'c-red');
+  var efEl=document.getElementById('kpi-effort');
+  efEl.textContent=fmt(effort);efEl.className='kpi-value '+(effort>0?'c-orange':'c-green');
+  set('kpi-enrichissement',fmt(enrich));
+  set('kpi-rdt-brut',rdtB.toFixed(2).replace('.',',')+' %');
+  set('kpi-rdt-net',rdtN.toFixed(2).replace('.',',')+' %');
+  set('kpi-prix-m2',Math.round(prix/surface).toLocaleString('fr-FR')+' €');
+
+  set('d-mensualite',fmt(mens));set('d-interets',fmt(intAn1));set('d-capital',fmt(capAn1));
+  document.getElementById('progress-fill').style.setProperty('--pct',Math.round(intAn1/mens*100)+'%');
+
+  window._sim={prix,fraisAg,fraisNot,travaux,apport,emprunt,tm,totMois,mens,revAn,chargesAn,duree,intAn1:intAn1*12,cfM,
+    params:{prix,surface,travaux,agPct,notPct,hausse,apport,taux,duree,loyer,vacance,copro,pno,taxe,entretien},
+    kpis:{cfM:Math.round(cfM),effort:Math.round(effort),enrich:Math.round(enrich),rdtB:rdtB.toFixed(2),rdtN:rdtN.toFixed(2),prixM2:Math.round(prix/surface)}
+  };
+
+  var labels=[],vals=[],dettes=[],pats=[],enrichs=[],mise=apport+fraisNot+fraisAg+travaux;
+  for(var n=0;n<=horizon;n++){
+    labels.push(n===0?'Achat':'An '+n);
+    var v=prix*Math.pow(1+hausse/100,n),d=capRestant(emprunt,tm,totMois,n),p=v-d;
+    vals.push(Math.round(v));dettes.push(Math.round(d));pats.push(Math.round(p));enrichs.push(Math.round(p-mise+cfAn*n));
+  }
+  var data={labels,vals,dettes,pats,enrichs};
+  if(typeof Chart!=='undefined')drawChart(data);else pendingData=data;
+  updateLMNP();
+}
+
+function drawChart(data){
+  var showE=document.getElementById('toggle-enrich-curve').checked;
+  var gc='#e2e8f0',tc='#94a3b8';
+  var ds=[
+    {label:'Valeur du bien',data:data.vals,borderColor:'#1d4ed8',backgroundColor:'rgba(29,78,216,0.05)',borderWidth:2,fill:false,tension:0.4,pointRadius:0,pointHoverRadius:4},
+    {label:'Capital restant dû',data:data.dettes,borderColor:'#dc2626',backgroundColor:'transparent',borderWidth:2,fill:false,tension:0.4,pointRadius:0,pointHoverRadius:4},
+    {label:'Patrimoine net',data:data.pats,borderColor:'#15803d',backgroundColor:'rgba(21,128,61,0.08)',borderWidth:2,fill:true,tension:0.4,pointRadius:0,pointHoverRadius:4},
+    {label:'Enrichissement cumulé',data:data.enrichs,borderColor:'#b45309',backgroundColor:'transparent',borderWidth:2,borderDash:[5,4],fill:false,tension:0.4,pointRadius:0,pointHoverRadius:4,hidden:!showE}
+  ];
+  if(chart){chart.data.labels=data.labels;chart.data.datasets=ds;chart.update('none');}
+  else{
+    var ctx=document.getElementById('myChart').getContext('2d');
+    chart=new Chart(ctx,{type:'line',data:{labels:data.labels,datasets:ds},options:{
+      responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},animation:{duration:200},
+      plugins:{
+        legend:{labels:{color:tc,font:{size:11,family:'Inter'},boxWidth:10,padding:14}},
+        tooltip:{backgroundColor:'#1e293b',titleColor:'#f1f5f9',bodyColor:'#94a3b8',padding:10,
+          callbacks:{label:function(c){return ' '+c.dataset.label+' : '+Math.round(c.raw).toLocaleString('fr-FR')+' €';}}}
+      },
+      scales:{
+        x:{ticks:{color:tc,font:{size:10},maxTicksLimit:10},grid:{color:gc}},
+        y:{ticks:{color:tc,font:{size:10},callback:function(v){return v>=1000000?(v/1000000).toFixed(1)+'M€':(v/1000).toFixed(0)+'k€';}},grid:{color:gc}}
+      }
+    }});
+  }
+}
+
+// ─── JSONBIN ───
+function getBinId(){return localStorage.getItem('investsimul_bin_id');}
+function setBinId(id){localStorage.setItem('investsimul_bin_id',id);}
+
+async function ensureBin(){
+  var id=getBinId();
+  if(id) return id;
+  // Créer un nouveau bin
+  var r=await fetch('https://api.jsonbin.io/v3/b',{
+    method:'POST',
+    headers:{'Content-Type':'application/json','X-Master-Key':JSONBIN_KEY,'X-Bin-Name':'InvestSimul'},
+    body:JSON.stringify({simulations:[]})
+  });
+  var data=await r.json();
+  var newId=data.metadata.id;
+  setBinId(newId);
+  return newId;
+}
+
+async function readBin(){
+  var id=getBinId();
+  if(!id) return [];
+  var r=await fetch('https://api.jsonbin.io/v3/b/'+id+'/latest',{
+    headers:{'X-Master-Key':JSONBIN_KEY}
+  });
+  var data=await r.json();
+  return data.record.simulations||[];
+}
+
+async function writeBin(sims){
+  var id=await ensureBin();
+  await fetch('https://api.jsonbin.io/v3/b/'+id,{
+    method:'PUT',
+    headers:{'Content-Type':'application/json','X-Master-Key':JSONBIN_KEY},
+    body:JSON.stringify({simulations:sims})
+  });
+}
+
+// ─── SAVE MODAL ───
+function openSaveModal(){
+  document.getElementById('modal-overlay').classList.add('show');
+  document.getElementById('m-prenom').focus();
+}
+function closeModal(){
+  document.getElementById('modal-overlay').classList.remove('show');
+}
+document.getElementById('modal-overlay').addEventListener('click',function(e){
+  if(e.target===this) closeModal();
+});
+
+async function saveSimulation(){
+  var prenom=document.getElementById('m-prenom').value.trim();
+  var nom=document.getElementById('m-nom').value.trim();
+  if(!prenom||!nom){showToast('⚠️ Prénom et nom du bien obligatoires');return;}
+  var btn=document.getElementById('btn-confirm-save');
+  btn.disabled=true;btn.textContent='Sauvegarde...';
+
+  var s=window._sim;
+  var sim={
+    id:Date.now().toString(),
+    prenom:prenom,
+    nom:nom,
+    lien:document.getElementById('m-lien').value.trim(),
+    commentaire:document.getElementById('m-commentaire').value.trim(),
+    date:new Date().toLocaleDateString('fr-FR'),
+    kpis:s.kpis,
+    params:s.params
+  };
+
+  try{
+    var sims=await readBin();
+    sims.unshift(sim);
+    await writeBin(sims);
+    closeModal();
+    showToast('✅ Simulation sauvegardée !');
+    document.getElementById('m-prenom').value='';
+    document.getElementById('m-nom').value='';
+    document.getElementById('m-lien').value='';
+    document.getElementById('m-commentaire').value='';
+  }catch(e){
+    showToast('❌ Erreur de sauvegarde. Vérifiez votre connexion.');
+  }
+  btn.disabled=false;btn.textContent='Sauvegarder';
+}
+
+// ─── LOAD & DISPLAY ───
+async function loadSimulations(){
+  var grid=document.getElementById('sim-grid');
+  var status=document.getElementById('comp-status');
+  status.textContent='Chargement...';
+  grid.innerHTML='<div style="padding:40px;text-align:center;color:var(--muted)">Chargement des simulations...</div>';
+
+  try{
+    var sims=await readBin();
+    status.textContent=sims.length+' simulation'+(sims.length>1?'s':'')+ ' enregistrée'+(sims.length>1?'s':'');
+    if(!sims.length){
+      grid.innerHTML='<div class="empty-state"><div class="icon">📭</div><p>Aucune simulation sauvegardée.<br>Lancez une simulation et cliquez sur <strong>💾 Sauvegarder</strong>.</p></div>';
+      return;
+    }
+    grid.innerHTML='';
+    sims.forEach(function(s){
+      var cfColor=s.kpis.cfM>=0?'c-green':'c-red';
+      var card=document.createElement('div');
+      card.className='sim-card';
+      card.innerHTML=
+        '<div class="sim-card-header">'+
+          '<div><div class="sim-name">'+escHtml(s.nom)+'</div><div class="sim-author">par '+escHtml(s.prenom)+'</div></div>'+
+          '<div class="sim-date">'+escHtml(s.date)+'</div>'+
+        '</div>'+
+        '<div class="sim-kpis">'+
+          '<div class="sim-kpi"><div class="sim-kpi-label">Cash-flow</div><div class="sim-kpi-val '+cfColor+'">'+fmtK(s.kpis.cfM)+' €/m</div></div>'+
+          '<div class="sim-kpi"><div class="sim-kpi-label">Rendement brut</div><div class="sim-kpi-val c-blue">'+s.kpis.rdtB+' %</div></div>'+
+          '<div class="sim-kpi"><div class="sim-kpi-label">Prix / m²</div><div class="sim-kpi-val">'+fmtK(s.kpis.prixM2)+' €</div></div>'+
+          '<div class="sim-kpi"><div class="sim-kpi-label">Enrichissement</div><div class="sim-kpi-val c-green">'+fmtK(s.kpis.enrich)+' €/m</div></div>'+
+          '<div class="sim-kpi"><div class="sim-kpi-label">Effort épargne</div><div class="sim-kpi-val c-orange">'+fmtK(s.kpis.effort)+' €/m</div></div>'+
+          '<div class="sim-kpi"><div class="sim-kpi-label">Rendement net</div><div class="sim-kpi-val c-blue">'+s.kpis.rdtN+' %</div></div>'+
+        '</div>'+
+        (s.lien?'<a class="sim-link" href="'+escHtml(s.lien)+'" target="_blank">🔗 '+escHtml(s.lien)+'</a>':'')+
+        (s.commentaire?'<div class="sim-comment">💬 '+escHtml(s.commentaire)+'</div>':'')+
+        '<div class="sim-params">Prix : '+fmtK(s.params.prix)+' € · Apport : '+fmtK(s.params.apport)+' € · Loyer : '+fmtK(s.params.loyer)+' €/mois · Taux : '+s.params.taux+'% · Durée : '+s.params.duree+' ans</div>'+
+        '<div class="sim-actions">'+
+          '<button class="btn-load" onclick="loadIntoSimulator(\''+s.id+'\')">⟵ Charger</button>'+
+          '<button class="btn-delete" onclick="deleteSimulation(\''+s.id+'\')">Supprimer</button>'+
+        '</div>';
+      grid.appendChild(card);
+    });
+  }catch(e){
+    status.textContent='Erreur de chargement';
+    grid.innerHTML='<div class="empty-state"><div class="icon">⚠️</div><p>Impossible de charger les simulations.<br>Vérifiez votre connexion.</p></div>';
+  }
+}
+
+async function deleteSimulation(id){
+  if(!confirm('Supprimer cette simulation ?')) return;
+  try{
+    var sims=await readBin();
+    sims=sims.filter(function(s){return s.id!==id;});
+    await writeBin(sims);
+    showToast('🗑️ Simulation supprimée');
+    loadSimulations();
+  }catch(e){showToast('❌ Erreur lors de la suppression');}
+}
+
+async function loadIntoSimulator(id){
+  try{
+    var sims=await readBin();
+    var s=sims.find(function(x){return x.id===id;});
+    if(!s) return;
+    var p=s.params;
+    var fields=['prix','surface','travaux','agence','notaire','hausse','apport','taux','duree','loyer','vacance','copro','pno','taxe','entretien'];
+    var map={agence:'agPct',notaire:'notPct'};
+    fields.forEach(function(k){
+      var key=map[k]||k;
+      var el=document.getElementById('r-'+k);
+      if(el&&p[key]!==undefined)el.value=p[key];
+      else if(el&&p[k]!==undefined)el.value=p[k];
+    });
+    // Show simulateur tab
+    var btn=document.querySelector('.nav-tab');
+    showPage('simulateur',btn);
+    update();
+    showToast('✅ Simulation "'+s.nom+'" chargée');
+  }catch(e){showToast('❌ Erreur lors du chargement');}
+}
+
+function fmtK(n){return Math.round(n).toLocaleString('fr-FR');}
+function escHtml(s){var d=document.createElement('div');d.textContent=s;return d.innerHTML;}
+
+// ─── LMNP ───
+function updateLMNP(){
+  var s=window._sim;if(!s)return;
+  var tPct=get('lr-terrain'),mob=get('lr-mobilier'),tmi=parseFloat(document.getElementById('l-tmi').value);
+  set('lv-terrain',tPct+' %');set('lv-mobilier',fmt(mob));
+  var aB=s.prix*(1-tPct/100)/30,aT=s.travaux/15,aM=mob/7,aF=(s.fraisAg+s.fraisNot)/s.duree,aTotal=aB+aT+aM+aF;
+  set('la-bati',fmt(aB));set('la-travaux',fmt(aT));set('la-mobilier',fmt(aM));set('la-frais',fmt(aF));set('la-total',fmt(aTotal));set('la-interets',fmt(s.intAn1));
+  var bSans=Math.max(0,s.revAn-s.chargesAn-s.intAn1),bAvec=Math.max(0,bSans-aTotal),tt=(tmi+17.2)/100;
+  var iS=bSans*tt,iA=bAvec*tt,eco=iS-iA;
+  set('lr-revenus',fmt(s.revAn)+'/an');set('lr-charges','−'+fmt(s.chargesAn)+'/an');
+  set('lr-interets','−'+fmt(s.intAn1)+'/an');set('lr-amort','−'+fmt(aTotal)+'/an');
+  var bEl=document.getElementById('lr-base');bEl.textContent=fmt(bAvec);bEl.className='val '+(bAvec===0?'c-green':'c-orange');
+  set('lr-base-sans',fmt(bSans)+'/an');set('lr-impot-sans',fmt(iS)+'/an');
+  var iAEl=document.getElementById('lr-impot-avec');iAEl.textContent=fmt(iA)+'/an';iAEl.className='val '+(iA===0?'c-green':'c-orange');
+  set('lr-economie',fmt(eco)+'/an soit '+fmt(eco/12)+'/mois');
+  var cfL=s.cfM-iA/12,cfS=s.cfM-iS/12;
+  var cfLEl=document.getElementById('lr-cf-lmnp');cfLEl.textContent=fmt(cfL)+'/mois';cfLEl.className='val '+(cfL>=0?'c-green':'c-orange');
+  set('lr-cf-sans',fmt(cfS)+'/mois');
+}
+
+function resetAll(){
+  Object.keys(DEFAULTS).forEach(function(k){var el=document.getElementById('r-'+k);if(el)el.value=DEFAULTS[k];});
+  document.getElementById('toggle-airbnb').checked=false;
+  document.getElementById('airbnb-fields').classList.remove('show');
+  document.getElementById('toggle-enrich-curve').checked=false;
+  document.getElementById('lr-terrain').value=15;
+  document.getElementById('lr-mobilier').value=5000;
+  document.getElementById('l-tmi').value=30;
+  if(chart){chart.destroy();chart=null;}
+  update();
+}
+function init(){update();}
+</script>
+</body>
+</html>
