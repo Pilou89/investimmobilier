@@ -283,11 +283,11 @@
 <nav>
   <div class="nav-brand">Invest<span>Simul</span></div>
   <div class="nav-tabs">
-    <button class="nav-tab active" onclick="showPage('simulateur',this)">Simulateur</button>
-    <button class="nav-tab" onclick="showPage('comparatif',this)">📁 Mes simulations</button>
-    <button class="nav-tab" onclick="showPage('lmnp',this)">Régime LMNP</button>
-    <button class="nav-tab" onclick="showPage('bisA',this)">✦ Bis A</button>
-    <button class="nav-tab" onclick="showPage('bisB',this)">✦ Bis B</button>
+    <button class="nav-tab active" data-page="simulateur" onclick="showPage('simulateur')">Simulateur</button>
+    <button class="nav-tab" data-page="comparatif" onclick="showPage('comparatif')">📁 Mes simulations</button>
+    <button class="nav-tab" data-page="lmnp" onclick="showPage('lmnp')">Régime LMNP</button>
+    <button class="nav-tab" data-page="bisA" onclick="showPage('bisA')">✦ Bis A</button>
+    <button class="nav-tab" data-page="bisB" onclick="showPage('bisB')">✦ Bis B</button>
   </div>
   <div class="nav-right">
     <button class="btn-save" onclick="openSaveModal()">💾 Sauvegarder</button>
@@ -730,11 +730,15 @@ function showToast(msg, dur){
   setTimeout(function(){t.classList.remove('show');},dur||2500);
 }
 
-function showPage(id,btn){
+function showPage(id){
   document.querySelectorAll('.page').forEach(function(p){p.classList.remove('active');});
   document.querySelectorAll('.nav-tab').forEach(function(t){t.classList.remove('active');});
-  document.getElementById('page-'+id).classList.add('active');
-  btn.classList.add('active');
+  var page=document.getElementById('page-'+id);
+  if(page) page.classList.add('active');
+  // Activate matching tab
+  document.querySelectorAll('.nav-tab').forEach(function(t){
+    if(t.getAttribute('data-page')===id) t.classList.add('active');
+  });
   if(id==='simulateur'&&pendingData){drawChart(pendingData);pendingData=null;}
   if(id==='comparatif'){loadSimulations();}
 }
