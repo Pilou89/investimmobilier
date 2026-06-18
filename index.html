@@ -288,8 +288,6 @@
     <button class="nav-tab" onclick="showPage('lmnp',this)">Régime LMNP</button>
     <button class="nav-tab" onclick="showPage('bisA',this)">✦ Bis A</button>
     <button class="nav-tab" onclick="showPage('bisB',this)">✦ Bis B</button>
-    <button class="nav-tab" onclick="showPage('bisA',this)">✦ Bis A</button>
-    <button class="nav-tab" onclick="showPage('bisB',this)">✦ Bis B</button>
   </div>
   <div class="nav-right">
     <button class="btn-save" onclick="openSaveModal()">💾 Sauvegarder</button>
@@ -701,7 +699,19 @@ var BIN_ID = null; // sera créé automatiquement au premier save
 (function(){
   var s=document.createElement('script');
   s.src='https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js';
-  s.onload=function(){init();};
+  s.onload=function(){
+    if(document.readyState==='loading'){
+      document.addEventListener('DOMContentLoaded', init);
+    } else {
+      init();
+    }
+  };
+  s.onerror=function(){
+    // Chart.js failed to load, init without chart
+    if(document.readyState==='loading'){
+      document.addEventListener('DOMContentLoaded', init);
+    } else { init(); }
+  };
   document.head.appendChild(s);
 })();
 
@@ -786,7 +796,7 @@ function update(){
   set('d-mensualite',fmt(mens));set('d-interets',fmt(intAn1));set('d-capital',fmt(capAn1));
   document.getElementById('progress-fill').style.setProperty('--pct',Math.round(intAn1/mens*100)+'%');
 
-  window._sim={prix,fraisAg,fraisNot,travaux,apport,emprunt,tm,totMois,mens,revAn,chargesAn,duree,intAn1:intAn1*12,cfM,enrich:enrich,effort:effort,rdtB:rdtBrut,rdtN:rdtNet,prixM2:Math.round(prix/surface),taux:taux,loyer:loyer,capAn1:capAn1,
+  window._sim={prix,fraisAg,fraisNot,travaux,apport,emprunt,tm,totMois,mens,revAn,chargesAn,duree,intAn1:intAn1*12,cfM,enrich:enrich,effort:effort,rdtB:rdtB,rdtN:rdtN,prixM2:Math.round(prix/surface),taux:taux,loyer:loyer,capAn1:capAn1,
     params:{prix,surface,travaux,agPct,notPct,hausse,apport,taux,duree,loyer,vacance,copro,pno,taxe,entretien},
     kpis:{cfM:Math.round(cfM),effort:Math.round(effort),enrich:Math.round(enrich),rdtB:rdtB.toFixed(2),rdtN:rdtN.toFixed(2),prixM2:Math.round(prix/surface)}
   };
@@ -1161,7 +1171,7 @@ function updateBis(){
   set('bisb-sub', fmtK(prix)+' € · '+fmtK(loyer)+' €/mois de loyer');
 }
 
-function init(){update();}
+function init(){update();setTimeout(function(){update();},300);}
 </script>
 </body>
 </html>
