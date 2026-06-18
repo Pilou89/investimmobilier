@@ -223,6 +223,59 @@
   @media(max-width:900px){.investor-kpis,.wealth-grid{grid-template-columns:1fr 1fr}.lmnp-decision-grid{grid-template-columns:1fr}}
   @media(max-width:900px){.sim-lmnp-grid{grid-template-columns:1fr 1fr}.sim-lmnp-header{flex-direction:column}.sim-lmnp-note{text-align:left}}
   @media(max-width:700px){.input-row{grid-template-columns:1fr}.kpi-grid{grid-template-columns:repeat(2,1fr)}.lmnp-inputs{grid-template-columns:1fr}.info-grid{grid-template-columns:1fr}.amort-grid{grid-template-columns:1fr 1fr}.investor-kpis,.wealth-grid,.asset-value-grid{grid-template-columns:1fr}.wealth-total{align-items:flex-start;flex-direction:column}.wealth-total .sub{text-align:left}}
+
+  /* ===== BIS A — Minimaliste ===== */
+  .bisa-layout{max-width:860px;margin:0 auto;padding:48px 32px;background:#fff;min-height:calc(100vh - 52px)}
+  .bisa-hero{margin-bottom:56px}
+  .bisa-address{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.15em;color:#94a3b8;margin-bottom:8px}
+  .bisa-price{font-size:52px;font-weight:300;color:#0f172a;letter-spacing:-0.03em;line-height:1}
+  .bisa-price span{font-size:16px;font-weight:400;color:#94a3b8;margin-left:8px;letter-spacing:0}
+  .bisa-divider{width:40px;height:1px;background:#0f172a;margin:24px 0}
+  .bisa-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:0;margin-bottom:48px;border-top:1px solid #e2e8f0}
+  .bisa-item{padding:20px 0 20px 0;border-bottom:1px solid #e2e8f0;padding-right:32px}
+  .bisa-item:nth-child(3n){padding-right:0}
+  .bisa-item-label{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.1em;color:#94a3b8;margin-bottom:6px}
+  .bisa-item-value{font-size:28px;font-weight:300;color:#0f172a;letter-spacing:-0.02em;line-height:1}
+  .bisa-item-unit{font-size:11px;color:#94a3b8;margin-top:3px}
+  .bisa-item.neg .bisa-item-value{color:#dc2626}
+  .bisa-item.pos .bisa-item-value{color:#15803d}
+  .bisa-item.neutral .bisa-item-value{color:#1d4ed8}
+  .bisa-section-title{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:#cbd5e1;margin-bottom:20px}
+  .bisa-verdict{padding:28px 0;border-top:1px solid #0f172a;border-bottom:1px solid #0f172a;margin-bottom:48px}
+  .bisa-verdict-label{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.1em;color:#94a3b8;margin-bottom:6px}
+  .bisa-verdict-text{font-size:18px;font-weight:400;color:#0f172a;line-height:1.5}
+
+  /* ===== BIS B — Mobile/App ===== */
+  .bisb-layout{max-width:440px;margin:0 auto;padding:20px 16px;min-height:calc(100vh - 52px);background:#f8fafc}
+  .bisb-header{text-align:center;margin-bottom:24px}
+  .bisb-header h2{font-size:15px;font-weight:600;color:#0f172a;margin-bottom:2px}
+  .bisb-header p{font-size:12px;color:#94a3b8}
+  .bisb-hero-card{background:linear-gradient(135deg,#1d4ed8,#1e40af);border-radius:20px;padding:28px 24px;margin-bottom:16px;color:white;text-align:center}
+  .bisb-hero-label{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.12em;opacity:.7;margin-bottom:8px}
+  .bisb-hero-value{font-size:48px;font-weight:700;letter-spacing:-0.03em;line-height:1;margin-bottom:4px}
+  .bisb-hero-unit{font-size:13px;opacity:.7}
+  .bisb-hero-sub{font-size:12px;opacity:.6;margin-top:12px}
+  .bisb-cards{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px}
+  .bisb-card{background:white;border-radius:14px;padding:16px;box-shadow:0 1px 3px rgba(0,0,0,.06)}
+  .bisb-card-label{font-size:9px;font-weight:600;text-transform:uppercase;letter-spacing:.1em;color:#94a3b8;margin-bottom:6px}
+  .bisb-card-value{font-size:24px;font-weight:700;color:#0f172a;letter-spacing:-0.02em;line-height:1}
+  .bisb-card-unit{font-size:10px;color:#94a3b8;margin-top:3px}
+  .bisb-card.green{border-left:3px solid #15803d}.bisb-card.green .bisb-card-value{color:#15803d}
+  .bisb-card.red{border-left:3px solid #dc2626}.bisb-card.red .bisb-card-value{color:#dc2626}
+  .bisb-card.blue{border-left:3px solid #1d4ed8}.bisb-card.blue .bisb-card-value{color:#1d4ed8}
+  .bisb-card.orange{border-left:3px solid #c2410c}.bisb-card.orange .bisb-card-value{color:#c2410c}
+  .bisb-section{background:white;border-radius:14px;padding:18px;margin-bottom:12px;box-shadow:0 1px 3px rgba(0,0,0,.06)}
+  .bisb-section-title{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:#94a3b8;margin-bottom:14px}
+  .bisb-row{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid #f1f5f9}
+  .bisb-row:last-child{border-bottom:none}
+  .bisb-row-label{font-size:12px;color:#475569}
+  .bisb-row-value{font-size:13px;font-weight:600;color:#0f172a;font-family:'JetBrains Mono',monospace}
+  .bisb-bar{background:#f1f5f9;border-radius:8px;height:8px;overflow:hidden;margin-top:10px}
+  .bisb-bar-fill{height:100%;border-radius:8px;background:linear-gradient(90deg,#dc2626 var(--pct),#15803d var(--pct))}
+  .bisb-verdict{background:linear-gradient(135deg,#f0fdf4,#eff6ff);border-radius:14px;padding:18px;margin-bottom:12px;border:1px solid #bbf7d0}
+  .bisb-verdict-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:#15803d;margin-bottom:6px}
+  .bisb-verdict-text{font-size:13px;color:#0f172a;line-height:1.6}
+
 </style>
 </head>
 <body>
@@ -233,6 +286,10 @@
     <button class="nav-tab active" onclick="showPage('simulateur',this)">Simulateur</button>
     <button class="nav-tab" onclick="showPage('comparatif',this)">📁 Mes simulations</button>
     <button class="nav-tab" onclick="showPage('lmnp',this)">Régime LMNP</button>
+    <button class="nav-tab" onclick="showPage('bisA',this)">✦ Bis A</button>
+    <button class="nav-tab" onclick="showPage('bisB',this)">✦ Bis B</button>
+    <button class="nav-tab" onclick="showPage('bisA',this)">✦ Bis A</button>
+    <button class="nav-tab" onclick="showPage('bisB',this)">✦ Bis B</button>
   </div>
   <div class="nav-right">
     <button class="btn-save" onclick="openSaveModal()">💾 Sauvegarder</button>
@@ -496,6 +553,143 @@
     </div>
 
   </div>
+
+<!-- ===== BIS A — MINIMALISTE ===== -->
+<div id="page-bisA" class="page">
+<div class="bisa-layout">
+  <div class="bisa-hero">
+    <div class="bisa-address" id="bisa-subtitle">Simulation en cours</div>
+    <div class="bisa-price" id="bisa-prix">—<span>€</span></div>
+    <div class="bisa-divider"></div>
+    <div style="font-size:13px;color:#64748b;line-height:1.7">
+      Apport <strong id="bisa-apport" style="color:#0f172a">—</strong> · 
+      Crédit <strong id="bisa-emprunt" style="color:#0f172a">—</strong> sur <strong id="bisa-duree" style="color:#0f172a">—</strong> · 
+      Loyer <strong id="bisa-loyer" style="color:#0f172a">—</strong>/mois
+    </div>
+  </div>
+
+  <div class="bisa-section-title">Performance</div>
+  <div class="bisa-row">
+    <div class="bisa-item" id="bisa-cf-wrap">
+      <div class="bisa-item-label">Cash-flow mensuel</div>
+      <div class="bisa-item-value" id="bisa-cf">—</div>
+      <div class="bisa-item-unit">€ / mois</div>
+    </div>
+    <div class="bisa-item pos">
+      <div class="bisa-item-label">Enrichissement</div>
+      <div class="bisa-item-value" id="bisa-enrich">—</div>
+      <div class="bisa-item-unit">€ / mois</div>
+    </div>
+    <div class="bisa-item neutral">
+      <div class="bisa-item-label">Rendement brut</div>
+      <div class="bisa-item-value" id="bisa-rdt">—</div>
+      <div class="bisa-item-unit">% / an</div>
+    </div>
+    <div class="bisa-item">
+      <div class="bisa-item-label">Effort d'épargne</div>
+      <div class="bisa-item-value" id="bisa-effort">—</div>
+      <div class="bisa-item-unit">€ / mois</div>
+    </div>
+    <div class="bisa-item neutral">
+      <div class="bisa-item-label">Rendement net</div>
+      <div class="bisa-item-value" id="bisa-rdtn">—</div>
+      <div class="bisa-item-unit">% / an</div>
+    </div>
+    <div class="bisa-item">
+      <div class="bisa-item-label">Prix / m²</div>
+      <div class="bisa-item-value" id="bisa-m2">—</div>
+      <div class="bisa-item-unit">€ / m²</div>
+    </div>
+  </div>
+
+  <div class="bisa-section-title">Financement</div>
+  <div class="bisa-row">
+    <div class="bisa-item">
+      <div class="bisa-item-label">Mensualité</div>
+      <div class="bisa-item-value" id="bisa-mens">—</div>
+      <div class="bisa-item-unit">€ / mois</div>
+    </div>
+    <div class="bisa-item neg">
+      <div class="bisa-item-label">Intérêts an 1</div>
+      <div class="bisa-item-value" id="bisa-int">—</div>
+      <div class="bisa-item-unit">€ / mois</div>
+    </div>
+    <div class="bisa-item pos">
+      <div class="bisa-item-label">Capital remboursé an 1</div>
+      <div class="bisa-item-value" id="bisa-cap">—</div>
+      <div class="bisa-item-unit">€ / mois</div>
+    </div>
+  </div>
+
+  <div class="bisa-verdict">
+    <div class="bisa-verdict-label">Verdict</div>
+    <div class="bisa-verdict-text" id="bisa-verdict">—</div>
+  </div>
+</div>
+</div>
+
+<!-- ===== BIS B — APP MOBILE ===== -->
+<div id="page-bisB" class="page">
+<div class="bisb-layout">
+  <div class="bisb-header">
+    <h2 id="bisb-title">Simulation</h2>
+    <p id="bisb-sub">—</p>
+  </div>
+
+  <div class="bisb-hero-card">
+    <div class="bisb-hero-label">Cash-flow mensuel</div>
+    <div class="bisb-hero-value" id="bisb-cf">—</div>
+    <div class="bisb-hero-unit">€ / mois</div>
+    <div class="bisb-hero-sub" id="bisb-effort-sub">Effort d'épargne : —</div>
+  </div>
+
+  <div class="bisb-cards">
+    <div class="bisb-card green">
+      <div class="bisb-card-label">Enrichissement</div>
+      <div class="bisb-card-value" id="bisb-enrich">—</div>
+      <div class="bisb-card-unit">€/mois</div>
+    </div>
+    <div class="bisb-card blue">
+      <div class="bisb-card-label">Rendement brut</div>
+      <div class="bisb-card-value" id="bisb-rdt">—</div>
+      <div class="bisb-card-unit">% / an</div>
+    </div>
+    <div class="bisb-card blue">
+      <div class="bisb-card-label">Rendement net</div>
+      <div class="bisb-card-value" id="bisb-rdtn">—</div>
+      <div class="bisb-card-unit">% / an</div>
+    </div>
+    <div class="bisb-card orange">
+      <div class="bisb-card-label">Prix / m²</div>
+      <div class="bisb-card-value" id="bisb-m2">—</div>
+      <div class="bisb-card-unit">€/m²</div>
+    </div>
+  </div>
+
+  <div class="bisb-section">
+    <div class="bisb-section-title">Mensualité année 1</div>
+    <div class="bisb-row"><span class="bisb-row-label">Mensualité totale</span><span class="bisb-row-value" id="bisb-mens">—</span></div>
+    <div class="bisb-row"><span class="bisb-row-label" style="color:#dc2626">↳ Intérêts</span><span class="bisb-row-value" style="color:#dc2626" id="bisb-int">—</span></div>
+    <div class="bisb-row"><span class="bisb-row-label" style="color:#15803d">↳ Capital remboursé</span><span class="bisb-row-value" style="color:#15803d" id="bisb-cap">—</span></div>
+    <div class="bisb-bar"><div class="bisb-bar-fill" id="bisb-bar" style="--pct:50%"></div></div>
+  </div>
+
+  <div class="bisb-section">
+    <div class="bisb-section-title">Acquisition</div>
+    <div class="bisb-row"><span class="bisb-row-label">Prix d'achat</span><span class="bisb-row-value" id="bisb-prix">—</span></div>
+    <div class="bisb-row"><span class="bisb-row-label">Apport</span><span class="bisb-row-value" id="bisb-apport">—</span></div>
+    <div class="bisb-row"><span class="bisb-row-label">Montant emprunté</span><span class="bisb-row-value" id="bisb-emprunt">—</span></div>
+    <div class="bisb-row"><span class="bisb-row-label">Taux</span><span class="bisb-row-value" id="bisb-taux">—</span></div>
+    <div class="bisb-row"><span class="bisb-row-label">Durée</span><span class="bisb-row-value" id="bisb-duree">—</span></div>
+  </div>
+
+  <div class="bisb-verdict">
+    <div class="bisb-verdict-label">Synthèse</div>
+    <div class="bisb-verdict-text" id="bisb-verdict">—</div>
+  </div>
+</div>
+</div>
+
 </div>
 
 <script>
@@ -592,7 +786,7 @@ function update(){
   set('d-mensualite',fmt(mens));set('d-interets',fmt(intAn1));set('d-capital',fmt(capAn1));
   document.getElementById('progress-fill').style.setProperty('--pct',Math.round(intAn1/mens*100)+'%');
 
-  window._sim={prix,fraisAg,fraisNot,travaux,apport,emprunt,tm,totMois,mens,revAn,chargesAn,duree,intAn1:intAn1*12,cfM,
+  window._sim={prix,fraisAg,fraisNot,travaux,apport,emprunt,tm,totMois,mens,revAn,chargesAn,duree,intAn1:intAn1*12,cfM,enrich:enrich,effort:effort,rdtB:rdtBrut,rdtN:rdtNet,prixM2:Math.round(prix/surface),taux:taux,loyer:loyer,capAn1:capAn1,
     params:{prix,surface,travaux,agPct,notPct,hausse,apport,taux,duree,loyer,vacance,copro,pno,taxe,entretien},
     kpis:{cfM:Math.round(cfM),effort:Math.round(effort),enrich:Math.round(enrich),rdtB:rdtB.toFixed(2),rdtN:rdtN.toFixed(2),prixM2:Math.round(prix/surface)}
   };
@@ -608,6 +802,7 @@ function update(){
   var data={labels,vals,dettes,pats,enrichs};
   if(typeof Chart!=='undefined')drawChart(data);else pendingData=data;
   updateLMNP();
+  updateBis();
 }
 
 function drawChart(data){
@@ -907,6 +1102,65 @@ function syncRange(rangeId){
   var r=document.getElementById(rangeId);
   if(n && r && document.activeElement!==n) n.value=parseFloat(r.value);
 }
+
+function updateBis(){
+  var s=window._sim;if(!s)return;
+  var fmtK=function(n){return Math.round(n).toLocaleString('fr-FR');};
+  var cfM=s.cfM, enrich=s.enrich, effort=s.effort;
+  var rdtB=s.rdtB, rdtN=s.rdtN, prixM2=s.prixM2;
+  var mens=s.mens, intAn1=s.intAn1/12, capAn1=s.capAn1;
+  var prix=s.prix, apport=s.apport, emprunt=s.emprunt, taux=s.taux, duree=s.duree, loyer=s.loyer;
+
+  // Verdict text
+  var verdict='';
+  if(cfM>=0) verdict='Cash-flow positif de '+fmtK(cfM)+' €/mois. L'investissement s'autofinance. Votre enrichissement mensuel est de '+fmtK(enrich)+' €.';
+  else if(effort<300) verdict='Effort d'épargne limité à '+fmtK(effort)+' €/mois. Votre locataire finance l'essentiel. Enrichissement mensuel : '+fmtK(enrich)+' €.';
+  else verdict='Effort d'épargne de '+fmtK(effort)+' €/mois. Vous construisez '+fmtK(enrich)+' €/mois de richesse. Interrogez-vous sur la soutenabilité.';
+
+  // ─── BIS A ───
+  set('bisa-prix', fmtK(prix));
+  set('bisa-apport', fmtK(apport)+' €');
+  set('bisa-emprunt', fmtK(emprunt)+' €');
+  set('bisa-duree', duree+' ans');
+  set('bisa-loyer', fmtK(loyer));
+  var cfEl=document.getElementById('bisa-cf');
+  if(cfEl){cfEl.textContent=fmtK(cfM);cfEl.closest('.bisa-item').className='bisa-item '+(cfM>=0?'pos':'neg');}
+  set('bisa-enrich', fmtK(enrich));
+  set('bisa-rdt', rdtB.toFixed(2).replace('.',','));
+  set('bisa-rdtn', rdtN.toFixed(2).replace('.',','));
+  set('bisa-effort', fmtK(effort));
+  set('bisa-m2', fmtK(prixM2));
+  set('bisa-mens', fmtK(mens));
+  set('bisa-int', fmtK(intAn1));
+  set('bisa-cap', fmtK(capAn1));
+  set('bisa-verdict', verdict);
+
+  // ─── BIS B ───
+  var bisb_cf=document.getElementById('bisb-cf');
+  if(bisb_cf){
+    bisb_cf.textContent=(cfM>=0?'+':'')+fmtK(cfM);
+    bisb_cf.closest('.bisb-hero-card').style.background=cfM>=0?'linear-gradient(135deg,#15803d,#166534)':'linear-gradient(135deg,#1d4ed8,#1e40af)';
+  }
+  set('bisb-effort-sub','Effort d'épargne : '+fmtK(effort)+' €/mois');
+  set('bisb-enrich', fmtK(enrich));
+  set('bisb-rdt', rdtB.toFixed(2).replace('.',','));
+  set('bisb-rdtn', rdtN.toFixed(2).replace('.',','));
+  set('bisb-m2', fmtK(prixM2));
+  set('bisb-mens', fmtK(mens)+' €');
+  set('bisb-int', fmtK(intAn1)+' €');
+  set('bisb-cap', fmtK(capAn1)+' €');
+  var pctI=Math.round(intAn1/mens*100);
+  var bar=document.getElementById('bisb-bar');if(bar)bar.style.setProperty('--pct',pctI+'%');
+  set('bisb-prix', fmtK(prix)+' €');
+  set('bisb-apport', fmtK(apport)+' €');
+  set('bisb-emprunt', fmtK(emprunt)+' €');
+  set('bisb-taux', taux.toFixed(2).replace('.',',')+' %');
+  set('bisb-duree', duree+' ans');
+  set('bisb-verdict', verdict);
+  set('bisb-title', 'Simulation');
+  set('bisb-sub', fmtK(prix)+' € · '+fmtK(loyer)+' €/mois de loyer');
+}
+
 function init(){update();}
 </script>
 </body>
