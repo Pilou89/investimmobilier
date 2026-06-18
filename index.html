@@ -722,7 +722,7 @@ var BIN_ID = null; // sera créé automatiquement au premier save
 var chart=null, pendingData=null;
 var DEFAULTS={prix:340000,surface:65,travaux:0,agence:4,notaire:7.5,hausse:1.5,apport:65000,taux:3.5,duree:20,loyer:1500,vacance:5,copro:1200,pno:300,taxe:800,entretien:500,nuits:60,tarif:80,commission:15,horizon:25};
 
-function fmt(n){return Math.round(n).toLocaleString('fr-FR')+' €';}
+function fmt(n){return Math.round(n).toLocaleString('fr-FR')+' \u20ac';}
 function pct(n){return n.toFixed(1).replace('.',',')+' %';}
 function get(id){return parseFloat(document.getElementById(id).value);}
 function getValue(key){var n=document.getElementById('n-'+key);return n&&n.value!==''?parseFloat(n.value):get('r-'+key);}
@@ -799,7 +799,7 @@ function update(){
   set('kpi-enrichissement',fmt(enrich));
   set('kpi-rdt-brut',rdtB.toFixed(2).replace('.',',')+' %');
   set('kpi-rdt-net',rdtN.toFixed(2).replace('.',',')+' %');
-  set('kpi-prix-m2',Math.round(prix/surface).toLocaleString('fr-FR')+' €');
+  set('kpi-prix-m2',Math.round(prix/surface).toLocaleString('fr-FR')+' \u20ac');
 
   set('d-mensualite',fmt(mens));set('d-interets',fmt(intAn1));set('d-capital',fmt(capAn1));
   document.getElementById('progress-fill').style.setProperty('--pct',Math.round(intAn1/mens*100)+'%');
@@ -840,11 +840,11 @@ function drawChart(data){
       plugins:{
         legend:{labels:{color:tc,font:{size:11,family:'Inter'},boxWidth:10,padding:14}},
         tooltip:{backgroundColor:'#1e293b',titleColor:'#f1f5f9',bodyColor:'#94a3b8',padding:10,
-          callbacks:{label:function(c){return ' '+c.dataset.label+' : '+Math.round(c.raw).toLocaleString('fr-FR')+' €';}}}
+          callbacks:{label:function(c){return ' '+c.dataset.label+' : '+Math.round(c.raw).toLocaleString('fr-FR')+' \u20ac';}}}
       },
       scales:{
         x:{ticks:{color:tc,font:{size:10},maxTicksLimit:10},grid:{color:gc}},
-        y:{ticks:{color:tc,font:{size:10},callback:function(v){return v>=1000000?(v/1000000).toFixed(1)+'M€':(v/1000).toFixed(0)+'k€';}},grid:{color:gc}}
+        y:{ticks:{color:tc,font:{size:10},callback:function(v){return v>=1000000?(v/1000000).toFixed(1)+'M\u20ac':(v/1000).toFixed(0)+'k\u20ac';}},grid:{color:gc}}
       }
     }});
   }
@@ -960,16 +960,16 @@ async function loadSimulations(){
           '<div class="sim-date">'+escHtml(s.date)+'</div>'+
         '</div>'+
         '<div class="sim-kpis">'+
-          '<div class="sim-kpi"><div class="sim-kpi-label">Cash-flow</div><div class="sim-kpi-val '+cfColor+'">'+fmtK(s.kpis.cfM)+' €/m</div></div>'+
+          '<div class="sim-kpi"><div class="sim-kpi-label">Cash-flow</div><div class="sim-kpi-val '+cfColor+'">'+fmtK(s.kpis.cfM)+' \u20ac/m</div></div>'+
           '<div class="sim-kpi"><div class="sim-kpi-label">Rendement brut</div><div class="sim-kpi-val c-blue">'+s.kpis.rdtB+' %</div></div>'+
-          '<div class="sim-kpi"><div class="sim-kpi-label">Prix / m²</div><div class="sim-kpi-val">'+fmtK(s.kpis.prixM2)+' €</div></div>'+
-          '<div class="sim-kpi"><div class="sim-kpi-label">Enrichissement</div><div class="sim-kpi-val c-green">'+fmtK(s.kpis.enrich)+' €/m</div></div>'+
-          '<div class="sim-kpi"><div class="sim-kpi-label">Effort épargne</div><div class="sim-kpi-val c-orange">'+fmtK(s.kpis.effort)+' €/m</div></div>'+
+          '<div class="sim-kpi"><div class="sim-kpi-label">Prix / m²</div><div class="sim-kpi-val">'+fmtK(s.kpis.prixM2)+' \u20ac</div></div>'+
+          '<div class="sim-kpi"><div class="sim-kpi-label">Enrichissement</div><div class="sim-kpi-val c-green">'+fmtK(s.kpis.enrich)+' \u20ac/m</div></div>'+
+          '<div class="sim-kpi"><div class="sim-kpi-label">Effort épargne</div><div class="sim-kpi-val c-orange">'+fmtK(s.kpis.effort)+' \u20ac/m</div></div>'+
           '<div class="sim-kpi"><div class="sim-kpi-label">Rendement net</div><div class="sim-kpi-val c-blue">'+s.kpis.rdtN+' %</div></div>'+
         '</div>'+
         (s.lien?'<a class="sim-link" href="'+escHtml(s.lien)+'" target="_blank">🔗 '+escHtml(s.lien)+'</a>':'')+
         (s.commentaire?'<div class="sim-comment">💬 '+escHtml(s.commentaire)+'</div>':'')+
-        '<div class="sim-params">Prix : '+fmtK(s.params.prix)+' € · Apport : '+fmtK(s.params.apport)+' € · Loyer : '+fmtK(s.params.loyer)+' €/mois · Taux : '+s.params.taux+'% · Durée : '+s.params.duree+' ans</div>'+
+        '<div class="sim-params">Prix : '+fmtK(s.params.prix)+' \u20ac · Apport : '+fmtK(s.params.apport)+' \u20ac · Loyer : '+fmtK(s.params.loyer)+' \u20ac/mois · Taux : '+s.params.taux+'% · Durée : '+s.params.duree+' ans</div>'+
         '<div class="sim-actions">'+
           '<button class="btn-load" onclick="loadIntoSimulator(\''+s.id+'\')">⟵ Charger</button>'+
           '<button class="btn-delete" onclick="deleteSimulation(\''+s.id+'\')">Supprimer</button>'+
@@ -1131,14 +1131,14 @@ function updateBis(){
 
   // Verdict text
   var verdict='';
-  if(cfM>=0) verdict='Cash-flow positif de '+fmtK(cfM)+' €/mois. L'investissement s'autofinance. Votre enrichissement mensuel est de '+fmtK(enrich)+' €.';
-  else if(effort<300) verdict='Effort d'épargne limité à '+fmtK(effort)+' €/mois. Votre locataire finance l'essentiel. Enrichissement mensuel : '+fmtK(enrich)+' €.';
-  else verdict='Effort d'épargne de '+fmtK(effort)+' €/mois. Vous construisez '+fmtK(enrich)+' €/mois de richesse. Interrogez-vous sur la soutenabilité.';
+  if(cfM>=0) verdict='Cash-flow positif de '+fmtK(cfM)+' \u20ac/mois. Enrichissement mensuel : '+fmtK(enrich)+' \u20ac.';
+  else if(effort<300) verdict='Effort d\'\u00e9pargne limit\u00e9 \u00e0 '+fmtK(effort)+' \u20ac/mois. Locataire finance l\'essentiel. Enrichissement : '+fmtK(enrich)+' \u20ac.';
+  else verdict='Effort d\'\u00e9pargne de '+fmtK(effort)+' \u20ac/mois. Enrichissement mensuel : '+fmtK(enrich)+' \u20ac.';
 
   // ─── BIS A ───
   set('bisa-prix', fmtK(prix));
-  set('bisa-apport', fmtK(apport)+' €');
-  set('bisa-emprunt', fmtK(emprunt)+' €');
+  set('bisa-apport', fmtK(apport)+' \u20ac');
+  set('bisa-emprunt', fmtK(emprunt)+' \u20ac');
   set('bisa-duree', duree+' ans');
   set('bisa-loyer', fmtK(loyer));
   var cfEl=document.getElementById('bisa-cf');
@@ -1159,24 +1159,24 @@ function updateBis(){
     bisb_cf.textContent=(cfM>=0?'+':'')+fmtK(cfM);
     bisb_cf.closest('.bisb-hero-card').style.background=cfM>=0?'linear-gradient(135deg,#15803d,#166534)':'linear-gradient(135deg,#1d4ed8,#1e40af)';
   }
-  set('bisb-effort-sub','Effort d'épargne : '+fmtK(effort)+' €/mois');
+  set('bisb-effort-sub','Effort d\'épargne : '+fmtK(effort)+' \u20ac/mois');
   set('bisb-enrich', fmtK(enrich));
   set('bisb-rdt', rdtB.toFixed(2).replace('.',','));
   set('bisb-rdtn', rdtN.toFixed(2).replace('.',','));
   set('bisb-m2', fmtK(prixM2));
-  set('bisb-mens', fmtK(mens)+' €');
-  set('bisb-int', fmtK(intAn1)+' €');
-  set('bisb-cap', fmtK(capAn1)+' €');
+  set('bisb-mens', fmtK(mens)+' \u20ac');
+  set('bisb-int', fmtK(intAn1)+' \u20ac');
+  set('bisb-cap', fmtK(capAn1)+' \u20ac');
   var pctI=Math.round(intAn1/mens*100);
   var bar=document.getElementById('bisb-bar');if(bar)bar.style.setProperty('--pct',pctI+'%');
-  set('bisb-prix', fmtK(prix)+' €');
-  set('bisb-apport', fmtK(apport)+' €');
-  set('bisb-emprunt', fmtK(emprunt)+' €');
+  set('bisb-prix', fmtK(prix)+' \u20ac');
+  set('bisb-apport', fmtK(apport)+' \u20ac');
+  set('bisb-emprunt', fmtK(emprunt)+' \u20ac');
   set('bisb-taux', taux.toFixed(2).replace('.',',')+' %');
   set('bisb-duree', duree+' ans');
   set('bisb-verdict', verdict);
   set('bisb-title', 'Simulation');
-  set('bisb-sub', fmtK(prix)+' € · '+fmtK(loyer)+' €/mois de loyer');
+  set('bisb-sub', fmtK(prix)+' \u20ac · '+fmtK(loyer)+' \u20ac/mois de loyer');
 }
 
 function init(){update();setTimeout(function(){update();},300);}
