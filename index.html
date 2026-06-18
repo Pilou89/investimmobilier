@@ -72,7 +72,7 @@
   .airbnb-fields{display:none}.airbnb-fields.show{display:block}
   .field-row{display:flex;align-items:center;gap:6px;margin-bottom:4px}
   .field-row input[type=range]{flex:1}
-  .num-input{width:66px;padding:2px 5px;border:1px solid rgba(0,0,0,.15);border-radius:4px;font-family:var(--mono);font-size:11px;font-weight:600;color:var(--text2);background:rgba(255,255,255,.7);text-align:right;outline:none}
+  .num-input{width:92px;padding:2px 5px;border:1px solid rgba(0,0,0,.15);border-radius:4px;font-family:var(--mono);font-size:11px;font-weight:600;color:var(--text2);background:rgba(255,255,255,.7);text-align:right;outline:none}
   .num-input:focus{border-color:var(--accent);background:white}
 
   .kpi-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:8px;margin-bottom:14px}
@@ -80,8 +80,9 @@
   .kpi-label{font-size:9px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--muted2);margin-bottom:6px}
   .kpi-value{font-family:var(--mono);font-size:18px;font-weight:700;line-height:1;margin-bottom:2px}
   .kpi-unit{font-size:10px;color:var(--muted2)}
-  .kpi-tooltip{display:none;position:absolute;bottom:calc(100% + 6px);left:50%;transform:translateX(-50%);width:210px;background:#1e293b;border-radius:6px;padding:8px 10px;font-size:11px;color:#cbd5e1;line-height:1.5;z-index:50;pointer-events:none;box-shadow:0 4px 12px rgba(0,0,0,.15)}
-  .kpi-card:hover .kpi-tooltip{display:block}
+  .kpi-tooltip{display:none;position:absolute;top:calc(100% + 6px);left:0;transform:none;width:230px;background:#1e293b;border-radius:6px;padding:8px 10px;font-size:11px;color:#cbd5e1;line-height:1.5;z-index:50;pointer-events:none;box-shadow:0 4px 12px rgba(0,0,0,.15)}
+  .kpi-card{cursor:help}
+  .kpi-card:hover .kpi-tooltip,.kpi-card:focus-within .kpi-tooltip{display:block}
   .c-red{color:var(--red)}.c-green{color:var(--green)}.c-orange{color:var(--orange)}.c-blue{color:var(--accent)}.c-muted{color:var(--muted)}
 
   .bottom-row{display:grid;grid-template-columns:2fr 1fr;gap:12px}
@@ -267,7 +268,7 @@
 
     <div class="panel panel-financement">
       <div class="panel-title">🏦 Financement</div>
-      <div class="field"><div class="field-label"><span>Apport</span><input type="number" class="num-input" id="n-apport" min="0" max="300000" step="5000" value="65000" oninput="syncNum('r-apport',this)"></div><input type="range" id="r-apport" min="0" max="300000" step="5000" value="65000" oninput="syncRange('r-apport');update()"></div>
+      <div class="field"><div class="field-label"><span>Apport</span><input type="number" class="num-input" id="n-apport" min="0" max="650000" step="5000" value="65000" oninput="syncNum('r-apport',this)"></div><input type="range" id="r-apport" min="0" max="650000" step="5000" value="65000" oninput="syncRange('r-apport');update()"></div>
       <div class="field"><div class="field-label"><span>Taux d'intérêt</span><input type="number" class="num-input" id="n-taux" min="0" max="6" step="0.05" value="3.5" oninput="syncNum('r-taux',this)"></div><input type="range" id="r-taux" min="0" max="6" step="0.05" value="3.5" oninput="syncRange('r-taux');update()"></div>
       <div class="field"><div class="field-label"><span>Durée du prêt</span><span id="v-duree"></span></div><input type="range" id="r-duree" min="10" max="30" step="1" value="20" oninput="update()"></div>
       <div class="calc-row"><span>Montant emprunté</span><span id="c-emprunt">—</span></div>
@@ -292,10 +293,10 @@
 
     <div class="panel panel-charges">
       <div class="panel-title">📋 Charges (€/an)</div>
-      <div class="field"><div class="field-label"><span>Copropriété (€/an)</span><span id="v-copro"></span></div><input type="range" id="r-copro" min="0" max="6000" step="100" value="1200" oninput="update()"></div>
-      <div class="field"><div class="field-label"><span>Assurance PNO (€/an)</span><span id="v-pno"></span></div><input type="range" id="r-pno" min="0" max="1500" step="50" value="300" oninput="update()"></div>
-      <div class="field"><div class="field-label"><span>Taxe foncière (€/an)</span><span id="v-taxe"></span></div><input type="range" id="r-taxe" min="0" max="5000" step="100" value="800" oninput="update()"></div>
-      <div class="field"><div class="field-label"><span>Entretien estimé (€/an)</span><span id="v-entretien"></span></div><input type="range" id="r-entretien" min="0" max="3000" step="100" value="500" oninput="update()"></div>
+      <div class="field"><div class="field-label"><span>Copropriété (€/an)</span><input type="number" class="num-input" id="n-copro" min="0" step="100" value="1200" oninput="syncNum('r-copro',this)"></div><input type="range" id="r-copro" min="0" max="6000" step="100" value="1200" oninput="syncRange('r-copro');update()"></div>
+      <div class="field"><div class="field-label"><span>Assurance PNO (€/an)</span><input type="number" class="num-input" id="n-pno" min="0" step="50" value="300" oninput="syncNum('r-pno',this)"></div><input type="range" id="r-pno" min="0" max="1500" step="50" value="300" oninput="syncRange('r-pno');update()"></div>
+      <div class="field"><div class="field-label"><span>Taxe foncière (€/an)</span><input type="number" class="num-input" id="n-taxe" min="0" step="100" value="800" oninput="syncNum('r-taxe',this)"></div><input type="range" id="r-taxe" min="0" max="5000" step="100" value="800" oninput="syncRange('r-taxe');update()"></div>
+      <div class="field"><div class="field-label"><span>Entretien estimé (€/an)</span><input type="number" class="num-input" id="n-entretien" min="0" step="100" value="500" oninput="syncNum('r-entretien',this)"></div><input type="range" id="r-entretien" min="0" max="3000" step="100" value="500" oninput="syncRange('r-entretien');update()"></div>
       <div class="total-charges" id="total-charges">Total : — €/an soit — €/mois</div>
     </div>
   </div>
@@ -416,6 +417,7 @@ var DEFAULTS={prix:340000,surface:65,travaux:0,agence:4,notaire:7.5,hausse:1.5,a
 function fmt(n){return Math.round(n).toLocaleString('fr-FR')+' €';}
 function pct(n){return n.toFixed(1).replace('.',',')+' %';}
 function get(id){return parseFloat(document.getElementById(id).value);}
+function getValue(key){var n=document.getElementById('n-'+key);return n&&n.value!==''?parseFloat(n.value):get('r-'+key);}
 function set(id,v){var el=document.getElementById(id);if(el)el.textContent=v;}
 
 function showToast(msg, dur){
@@ -439,11 +441,11 @@ function calcPMT(r,n,pv){return r===0?pv/n:pv*r/(1-Math.pow(1+r,-n));}
 function capRestant(m,tm,tot,an){var n=an*12;if(n>=tot)return 0;return m*(Math.pow(1+tm,tot)-Math.pow(1+tm,n))/(Math.pow(1+tm,tot)-1);}
 
 function update(){
-  var prix=get('r-prix'),surface=get('r-surface'),travaux=get('r-travaux'),
+  var prix=getValue('prix'),surface=getValue('surface'),travaux=getValue('travaux'),
     agPct=get('r-agence'),notPct=get('r-notaire'),hausse=get('r-hausse'),
-    apport=get('r-apport'),taux=get('r-taux'),duree=get('r-duree'),
-    loyer=get('r-loyer'),vacance=get('r-vacance'),
-    copro=get('r-copro'),pno=get('r-pno'),taxe=get('r-taxe'),entretien=get('r-entretien'),
+    apport=getValue('apport'),taux=getValue('taux'),duree=get('r-duree'),
+    loyer=getValue('loyer'),vacance=get('r-vacance'),
+    copro=getValue('copro'),pno=getValue('pno'),taxe=getValue('taxe'),entretien=getValue('entretien'),
     horizon=get('r-horizon');
 
   set('v-prix',fmt(prix));set('v-surface',surface+' m²');set('v-travaux',fmt(travaux));
@@ -454,7 +456,7 @@ function update(){
   set('horizon-val',horizon);
 
   // sync number inputs
-  ['prix','surface','travaux','apport','taux','loyer'].forEach(function(k){syncRange('r-'+k);});
+  ['prix','surface','travaux','apport','taux','loyer','copro','pno','taxe','entretien'].forEach(function(k){syncRange('r-'+k);});
 
 
   var fraisAg=prix*agPct/100, fraisNot=(prix+fraisAg)*notPct/100;
@@ -736,15 +738,17 @@ function resetAll(){
 function syncNum(rangeId, numEl){
   var r=document.getElementById(rangeId);
   var v=parseFloat(numEl.value);
-  if(!isNaN(v) && v>=parseFloat(r.min) && v<=parseFloat(r.max)){
-    r.value=v;update();
-  }
+  if(isNaN(v)){return;}
+  if(v<parseFloat(r.min)) r.min=v;
+  if(v>parseFloat(r.max)) r.max=v;
+  r.value=v;
+  update();
 }
 function syncRange(rangeId){
   var key=rangeId.substring(2);
   var n=document.getElementById('n-'+key);
   var r=document.getElementById(rangeId);
-  if(n && r) n.value=parseFloat(r.value);
+  if(n && r && document.activeElement!==n) n.value=parseFloat(r.value);
 }
 function init(){update();}
 </script>
