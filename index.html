@@ -1218,7 +1218,28 @@ document.addEventListener('click', function(e){
 });
 
 
+function loadSheetJS(cb){
+  if(typeof XLSX !== 'undefined'){ cb(); return; }
+  var s=document.createElement('script');
+  s.src='https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js';
+  s.onload=function(){ cb(); };
+  s.onerror=function(){
+    // Fallback to unpkg
+    var s2=document.createElement('script');
+    s2.src='https://unpkg.com/xlsx@0.18.5/dist/xlsx.full.min.js';
+    s2.onload=function(){ cb(); };
+    document.head.appendChild(s2);
+  };
+  document.head.appendChild(s);
+}
+
 function exportExcel(){
+  loadSheetJS(function(){
+    doExport();
+  });
+}
+
+function doExport(){
   if(typeof XLSX === 'undefined'){ alert('SheetJS non chargé, réessayez dans quelques secondes.'); return; }
   var s = window._sim;
   if(!s){ alert('Lancez d\'abord une simulation.'); return; }
@@ -1312,7 +1333,7 @@ function exportExcel(){
   // ─── Export ───
   var filename = 'InvestSimul_' + new Date().toISOString().slice(0,10) + '.xlsx';
   XLSX.writeFile(wb, filename);
-}
+}}
 
 
 function getV(id){var el=document.getElementById(id);return el?parseFloat(el.value)||0:0;}
