@@ -74,6 +74,8 @@
   .field-row input[type=range]{flex:1}
   .num-input{width:92px;padding:2px 5px;border:1px solid rgba(0,0,0,.15);border-radius:4px;font-family:var(--mono);font-size:11px;font-weight:600;color:var(--text2);background:rgba(255,255,255,.7);text-align:right;outline:none}
   .num-input:focus{border-color:var(--accent);background:white}
+  .field-label{position:relative}
+  .num-unit{font-size:10px;color:var(--muted);font-weight:500;white-space:nowrap;margin-left:2px}
 
   .kpi-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:8px;margin-bottom:14px}
   .kpi-card{background:var(--white);border:1px solid var(--border);border-radius:8px;padding:12px;position:relative}
@@ -265,6 +267,13 @@
   .compare-table tr.total-row td{background:var(--bg);font-weight:700}
   .lmnp-compare-wrap{background:var(--white);border:1px solid var(--border);border-radius:10px;padding:16px 18px;margin-bottom:16px}
   .lmnp-compare-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted2);margin-bottom:12px}
+
+  /* ===== FAVORIS ===== */
+  .fav-btn{background:none;border:none;cursor:pointer;font-size:18px;padding:2px 4px;line-height:1;transition:transform .15s}
+  .fav-btn:hover{transform:scale(1.2)}
+  .fav-filter{display:flex;gap:6px;margin-bottom:14px}
+  .fav-filter button{padding:4px 12px;border-radius:6px;border:1px solid var(--border2);background:var(--white);color:var(--muted);font-family:var(--font);font-size:11px;cursor:pointer}
+  .fav-filter button.active{background:var(--accent);color:white;border-color:var(--accent)}
 </style>
 </head>
 <body>
@@ -370,12 +379,12 @@
   <div class="input-row">
     <div class="panel panel-bien">
       <div class="panel-title">🏠 Bien immobilier</div>
-      <div class="field"><div class="field-label"><span>Prix d'achat</span><input type="number" class="num-input" id="n-prix" min="50000" max="1000000" step="5000" value="340000" oninput="syncNum('r-prix',this)"></div><input type="range" id="r-prix" min="50000" max="1000000" step="5000" value="340000" oninput="syncRange('r-prix');update()"></div>
-      <div class="field"><div class="field-label"><span>Surface (m²)</span><input type="number" class="num-input" id="n-surface" min="10" max="200" step="1" value="65" oninput="syncNum('r-surface',this)"></div><input type="range" id="r-surface" min="10" max="200" step="1" value="65" oninput="syncRange('r-surface');update()"></div>
-      <div class="field"><div class="field-label"><span>Travaux</span><input type="number" class="num-input" id="n-travaux" min="0" max="50000" step="500" value="0" oninput="syncNum('r-travaux',this)"></div><input type="range" id="r-travaux" min="0" max="50000" step="500" value="0" oninput="syncRange('r-travaux');update()"></div>
-      <div class="field"><div class="field-label"><span>Frais d'agence</span><input type="number" class="num-input" id="n-agence" min="0" max="8" step="0.5" value="4" oninput="syncNum('r-agence',this)"></div><input type="range" id="r-agence" min="0" max="8" step="0.5" value="4" oninput="syncRange('r-agence');update()"></div>
-      <div class="field"><div class="field-label"><span>Frais de notaire</span><input type="number" class="num-input" id="n-notaire" min="2" max="9" step="0.5" value="7.5" oninput="syncNum('r-notaire',this)"></div><input type="range" id="r-notaire" min="2" max="9" step="0.5" value="7.5" oninput="syncRange('r-notaire');update()"></div>
-      <div class="field"><div class="field-label"><span>Hausse annuelle estimée</span><input type="number" class="num-input" id="n-hausse" min="0" max="5" step="0.1" value="1.5" oninput="syncNum('r-hausse',this)"></div><input type="range" id="r-hausse" min="0" max="5" step="0.1" value="1.5" oninput="syncRange('r-hausse');update()"></div>
+      <div class="field"><div class="field-label"><span>Prix d'achat</span><input type="number" class="num-input" id="n-prix" placeholder="€" title="€" min="50000" max="1000000" step="5000" value="340000" oninput="syncNum('r-prix',this)"><span class="num-unit">€</span></div><input type="range" id="r-prix" min="50000" max="1000000" step="5000" value="340000" oninput="syncRange('r-prix');update()"></div>
+      <div class="field"><div class="field-label"><span>Surface (m²)</span><input type="number" class="num-input" id="n-surface" placeholder="m²" title="m²" min="10" max="200" step="1" value="65" oninput="syncNum('r-surface',this)"><span class="num-unit">m²</span></div><input type="range" id="r-surface" min="10" max="200" step="1" value="65" oninput="syncRange('r-surface');update()"></div>
+      <div class="field"><div class="field-label"><span>Travaux</span><input type="number" class="num-input" id="n-travaux" placeholder="€" title="€" min="0" max="50000" step="500" value="0" oninput="syncNum('r-travaux',this)"><span class="num-unit">€</span></div><input type="range" id="r-travaux" min="0" max="50000" step="500" value="0" oninput="syncRange('r-travaux');update()"></div>
+      <div class="field"><div class="field-label"><span>Frais d'agence</span><input type="number" class="num-input" id="n-agence" placeholder="%" title="%" min="0" max="8" step="0.5" value="4" oninput="syncNum('r-agence',this)"><span class="num-unit">%</span></div><input type="range" id="r-agence" min="0" max="8" step="0.5" value="4" oninput="syncRange('r-agence');update()"></div>
+      <div class="field"><div class="field-label"><span>Frais de notaire</span><input type="number" class="num-input" id="n-notaire" placeholder="%" title="%" min="2" max="9" step="0.5" value="7.5" oninput="syncNum('r-notaire',this)"><span class="num-unit">%</span></div><input type="range" id="r-notaire" min="2" max="9" step="0.5" value="7.5" oninput="syncRange('r-notaire');update()"></div>
+      <div class="field"><div class="field-label"><span>Hausse annuelle estimée</span><input type="number" class="num-input" id="n-hausse" placeholder="%" title="%" min="0" max="5" step="0.1" value="1.5" oninput="syncNum('r-hausse',this)"><span class="num-unit">%</span></div><input type="range" id="r-hausse" min="0" max="5" step="0.1" value="1.5" oninput="syncRange('r-hausse');update()"></div>
       <div class="calc-row"><span>Frais d'agence</span><span id="c-agence">—</span></div>
       <div class="calc-row"><span>Frais de notaire</span><span id="c-notaire">—</span></div>
       <div class="calc-row"><span>Coût total</span><span id="c-total-acq">—</span></div>
@@ -383,26 +392,26 @@
 
     <div class="panel panel-financement">
       <div class="panel-title">🏦 Financement</div>
-      <div class="field"><div class="field-label"><span>Apport</span><input type="number" class="num-input" id="n-apport" min="0" max="650000" step="5000" value="65000" oninput="syncNum('r-apport',this)"></div><input type="range" id="r-apport" min="0" max="650000" step="5000" value="65000" oninput="syncRange('r-apport');update()"></div>
-      <div class="field"><div class="field-label"><span>Taux d'intérêt</span><input type="number" class="num-input" id="n-taux" min="0" max="6" step="0.05" value="3.5" oninput="syncNum('r-taux',this)"></div><input type="range" id="r-taux" min="0" max="6" step="0.05" value="3.5" oninput="syncRange('r-taux');update()"></div>
-      <div class="field"><div class="field-label"><span>Durée du prêt</span><input type="number" class="num-input" id="n-duree" min="10" max="30" step="1" value="20" oninput="syncNum('r-duree',this)"></div><input type="range" id="r-duree" min="10" max="30" step="1" value="20" oninput="syncRange('r-duree');update()"></div>
-      <div class="field"><div class="field-label"><span>Revenus nets mensuels</span><input type="number" class="num-input" id="n-revenus" min="0" max="20000" step="100" value="3500" oninput="syncNum('r-revenus',this)"></div><input type="range" id="r-revenus" min="0" max="20000" step="100" value="3500" oninput="syncRange('r-revenus');update()"></div>
+      <div class="field"><div class="field-label"><span>Apport</span><input type="number" class="num-input" id="n-apport" placeholder="€" title="€" min="0" max="650000" step="5000" value="65000" oninput="syncNum('r-apport',this)"><span class="num-unit">€</span></div><input type="range" id="r-apport" min="0" max="650000" step="5000" value="65000" oninput="syncRange('r-apport');update()"></div>
+      <div class="field"><div class="field-label"><span>Taux d'intérêt</span><input type="number" class="num-input" id="n-taux" placeholder="%" title="%" min="0" max="6" step="0.05" value="3.5" oninput="syncNum('r-taux',this)"><span class="num-unit">%</span></div><input type="range" id="r-taux" min="0" max="6" step="0.05" value="3.5" oninput="syncRange('r-taux');update()"></div>
+      <div class="field"><div class="field-label"><span>Durée du prêt</span><input type="number" class="num-input" id="n-duree" placeholder="ans" title="ans" min="10" max="30" step="1" value="20" oninput="syncNum('r-duree',this)"><span class="num-unit">ans</span></div><input type="range" id="r-duree" min="10" max="30" step="1" value="20" oninput="syncRange('r-duree');update()"></div>
+      <div class="field"><div class="field-label"><span>Revenus nets mensuels</span><input type="number" class="num-input" id="n-revenus" placeholder="€" title="€" min="0" max="20000" step="100" value="3500" oninput="syncNum('r-revenus',this)"><span class="num-unit">€</span></div><input type="range" id="r-revenus" min="0" max="20000" step="100" value="3500" oninput="syncRange('r-revenus');update()"></div>
       <div class="calc-row"><span>Montant emprunté</span><span id="c-emprunt">—</span></div>
       <div class="calc-row"><span>Mensualité</span><span id="c-mensualite">—</span></div>
     </div>
 
     <div class="panel panel-revenus">
       <div class="panel-title">💰 Revenus locatifs</div>
-      <div class="field"><div class="field-label"><span>Loyer mensuel (€/mois)</span><input type="number" class="num-input" id="n-loyer" min="300" max="5000" step="50" value="1500" oninput="syncNum('r-loyer',this)"></div><input type="range" id="r-loyer" min="300" max="5000" step="50" value="1500" oninput="syncRange('r-loyer');update()"></div>
-      <div class="field"><div class="field-label"><span>Vacance locative</span><input type="number" class="num-input" id="n-vacance" min="0" max="20" step="0.5" value="5" oninput="syncNum('r-vacance',this)"></div><input type="range" id="r-vacance" min="0" max="20" step="0.5" value="5" oninput="syncRange('r-vacance');update()"></div>
+      <div class="field"><div class="field-label"><span>Loyer mensuel (€/mois)</span><input type="number" class="num-input" id="n-loyer" placeholder="€" title="€" min="300" max="5000" step="50" value="1500" oninput="syncNum('r-loyer',this)"><span class="num-unit">€</span></div><input type="range" id="r-loyer" min="300" max="5000" step="50" value="1500" oninput="syncRange('r-loyer');update()"></div>
+      <div class="field"><div class="field-label"><span>Vacance locative</span><input type="number" class="num-input" id="n-vacance" placeholder="%" title="%" min="0" max="20" step="0.5" value="5" oninput="syncNum('r-vacance',this)"><span class="num-unit">%</span></div><input type="range" id="r-vacance" min="0" max="20" step="0.5" value="5" oninput="syncRange('r-vacance');update()"></div>
       <div style="font-size:10px;color:var(--muted);margin-bottom:6px;font-family:var(--mono)" id="vacance-semaines">soit — semaines/an</div>
       <div class="calc-row"><span>Revenu annuel effectif</span><span id="c-revenu">—</span></div>
       <div style="margin-top:10px">
         <div class="toggle-row"><span>Option Airbnb</span><label class="toggle"><input type="checkbox" id="toggle-airbnb" onchange="toggleAirbnb()"><span class="toggle-slider"></span></label></div>
         <div class="airbnb-fields" id="airbnb-fields">
-          <div class="field"><div class="field-label"><span>Nuits louées (nuits/an)</span><input type="number" class="num-input" id="n-nuits" min="0" max="365" step="5" value="60" oninput="syncNum('r-nuits',this)"></div><input type="range" id="r-nuits" min="0" max="365" step="5" value="60" oninput="syncRange('r-nuits');update()"></div>
-          <div class="field"><div class="field-label"><span>Tarif par nuit (€)</span><input type="number" class="num-input" id="n-tarif" min="20" max="500" step="5" value="80" oninput="syncNum('r-tarif',this)"></div><input type="range" id="r-tarif" min="20" max="500" step="5" value="80" oninput="syncRange('r-tarif');update()"></div>
-          <div class="field"><div class="field-label"><span>Commission plateforme</span><input type="number" class="num-input" id="n-commission" min="0" max="25" step="0.5" value="15" oninput="syncNum('r-commission',this)"></div><input type="range" id="r-commission" min="0" max="25" step="0.5" value="15" oninput="syncRange('r-commission');update()"></div>
+          <div class="field"><div class="field-label"><span>Nuits louées (nuits/an)</span><input type="number" class="num-input" id="n-nuits" placeholder="nuits" title="nuits" min="0" max="365" step="5" value="60" oninput="syncNum('r-nuits',this)"><span class="num-unit">nuits</span></div><input type="range" id="r-nuits" min="0" max="365" step="5" value="60" oninput="syncRange('r-nuits');update()"></div>
+          <div class="field"><div class="field-label"><span>Tarif par nuit (€)</span><input type="number" class="num-input" id="n-tarif" placeholder="€" title="€" min="20" max="500" step="5" value="80" oninput="syncNum('r-tarif',this)"><span class="num-unit">€</span></div><input type="range" id="r-tarif" min="20" max="500" step="5" value="80" oninput="syncRange('r-tarif');update()"></div>
+          <div class="field"><div class="field-label"><span>Commission plateforme</span><input type="number" class="num-input" id="n-commission" placeholder="%" title="%" min="0" max="25" step="0.5" value="15" oninput="syncNum('r-commission',this)"><span class="num-unit">%</span></div><input type="range" id="r-commission" min="0" max="25" step="0.5" value="15" oninput="syncRange('r-commission');update()"></div>
           <div class="calc-row"><span>Revenu Airbnb annuel</span><span id="c-airbnb">—</span></div>
         </div>
       </div>
@@ -410,10 +419,10 @@
 
     <div class="panel panel-charges">
       <div class="panel-title">📋 Charges (€/an)</div>
-      <div class="field"><div class="field-label"><span>Copropriété (€/an)</span><input type="number" class="num-input" id="n-copro" min="0" step="100" value="1200" oninput="syncNum('r-copro',this)"></div><input type="range" id="r-copro" min="0" max="6000" step="100" value="1200" oninput="syncRange('r-copro');update()"></div>
-      <div class="field"><div class="field-label"><span>Assurance PNO (€/an)</span><input type="number" class="num-input" id="n-pno" min="0" step="50" value="300" oninput="syncNum('r-pno',this)"></div><input type="range" id="r-pno" min="0" max="1500" step="50" value="300" oninput="syncRange('r-pno');update()"></div>
-      <div class="field"><div class="field-label"><span>Taxe foncière (€/an)</span><input type="number" class="num-input" id="n-taxe" min="0" step="100" value="800" oninput="syncNum('r-taxe',this)"></div><input type="range" id="r-taxe" min="0" max="5000" step="100" value="800" oninput="syncRange('r-taxe');update()"></div>
-      <div class="field"><div class="field-label"><span>Entretien estimé (€/an)</span><input type="number" class="num-input" id="n-entretien" min="0" step="100" value="500" oninput="syncNum('r-entretien',this)"></div><input type="range" id="r-entretien" min="0" max="3000" step="100" value="500" oninput="syncRange('r-entretien');update()"></div>
+      <div class="field"><div class="field-label"><span>Copropriété (€/an)</span><input type="number" class="num-input" id="n-copro" placeholder="€" title="€" min="0" step="100" value="1200" oninput="syncNum('r-copro',this)"><span class="num-unit">€</span></div><input type="range" id="r-copro" min="0" max="6000" step="100" value="1200" oninput="syncRange('r-copro');update()"></div>
+      <div class="field"><div class="field-label"><span>Assurance PNO (€/an)</span><input type="number" class="num-input" id="n-pno" placeholder="€" title="€" min="0" step="50" value="300" oninput="syncNum('r-pno',this)"><span class="num-unit">€</span></div><input type="range" id="r-pno" min="0" max="1500" step="50" value="300" oninput="syncRange('r-pno');update()"></div>
+      <div class="field"><div class="field-label"><span>Taxe foncière (€/an)</span><input type="number" class="num-input" id="n-taxe" placeholder="€" title="€" min="0" step="100" value="800" oninput="syncNum('r-taxe',this)"><span class="num-unit">€</span></div><input type="range" id="r-taxe" min="0" max="5000" step="100" value="800" oninput="syncRange('r-taxe');update()"></div>
+      <div class="field"><div class="field-label"><span>Entretien estimé (€/an)</span><input type="number" class="num-input" id="n-entretien" placeholder="€" title="€" min="0" step="100" value="500" oninput="syncNum('r-entretien',this)"><span class="num-unit">€</span></div><input type="range" id="r-entretien" min="0" max="3000" step="100" value="500" oninput="syncRange('r-entretien');update()"></div>
       <div class="total-charges" id="total-charges">Total : — €/an soit — €/mois</div>
     </div>
   </div>
@@ -454,6 +463,10 @@
       <div class="comp-status" id="comp-status">Chargement...</div>
     </div>
     <button class="btn-refresh" onclick="loadSimulations()">↺ Actualiser</button>
+  </div>
+  <div class="fav-filter">
+    <button id="filter-all" class="active" onclick="setFilter('all')">Toutes</button>
+    <button id="filter-fav" onclick="setFilter('fav')">⭐ Favoris</button>
   </div>
   <div class="sim-grid" id="sim-grid">
     <div class="empty-state"><div class="icon">📭</div><p>Aucune simulation sauvegardée</p></div>
@@ -934,6 +947,9 @@ async function loadSimulations(){
   try{
     var sims=await readBin();
     status.textContent=sims.length+' simulation'+(sims.length>1?'s':'')+ ' enregistrée'+(sims.length>1?'s':'');
+    if(currentFilter==='fav'){
+      sims=sims.filter(function(s){return localStorage.getItem('fav_'+s.id)==='1';});
+    }
     if(!sims.length){
       grid.innerHTML='<div class="empty-state"><div class="icon">📭</div><p>Aucune simulation sauvegardée.<br>Lancez une simulation et cliquez sur <strong>💾 Sauvegarder</strong>.</p></div>';
       return;
@@ -943,10 +959,11 @@ async function loadSimulations(){
       var cfColor=s.kpis.cfM>=0?'c-green':'c-red';
       var card=document.createElement('div');
       card.className='sim-card';
+      var isFav = (localStorage.getItem('fav_'+s.id)==='1');
       card.innerHTML=
         '<div class="sim-card-header">'+
           '<div><div class="sim-name">'+escHtml(s.nom)+'</div><div class="sim-author">par '+escHtml(s.prenom)+'</div></div>'+
-          '<div class="sim-date">'+escHtml(s.date)+'</div>'+
+          '<div style="display:flex;align-items:center;gap:8px"><div class="sim-date">'+escHtml(s.date)+'</div><button class="fav-btn" data-sid="'+s.id+'" title="Favori">'+(isFav?'⭐':'☆')+'</button></div>'+
         '</div>'+
         '<div class="sim-kpis">'+
           '<div class="sim-kpi"><div class="sim-kpi-label">Cash-flow</div><div class="sim-kpi-val '+cfColor+'">'+fmtK(s.kpis.cfM)+' \u20ac/m</div></div>'+
@@ -1134,6 +1151,27 @@ function updateLMNP(){
   if(dN){dN.textContent=fC(Math.round((cfNet10L-cfNet10N)/1000))+'k€';dN.className='col-diff '+((cfNet10L-cfNet10N)>=0?'c-green':'c-red');}
 
 }
+
+
+var currentFilter = 'all';
+function setFilter(f){
+  currentFilter = f;
+  document.querySelectorAll('.fav-filter button').forEach(function(b){b.classList.remove('active');});
+  document.getElementById('filter-'+f).classList.add('active');
+  loadSimulations();
+}
+
+function toggleFav(id, btn){
+  var isFav = localStorage.getItem('fav_'+id) === '1';
+  if(isFav){ localStorage.removeItem('fav_'+id); btn.textContent='☆'; }
+  else { localStorage.setItem('fav_'+id,'1'); btn.textContent='★'; }
+}
+
+// Event delegation for fav buttons
+document.addEventListener('click', function(e){
+  var btn = e.target.closest('.fav-btn');
+  if(btn && btn.dataset.sid){ toggleFav(btn.dataset.sid, btn); }
+});
 
 function resetAll(){
   Object.keys(DEFAULTS).forEach(function(k){var el=document.getElementById('r-'+k);if(el)el.value=DEFAULTS[k];});
