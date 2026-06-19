@@ -1139,11 +1139,13 @@ function updateLMNP(){
   set('wp-total',fmt(m.patrimoine)+'/an');set('wp-total-mois',fmt(m.patrimoine/12)+'/mois');
   updateSimulatorLMNPImpact();
 
+  var tauxTotal=(m.a.tmi+17.2)/100;
+  var aB=m.aB,aT=m.aT,aM=m.aM,aF=m.aF,aTotal=m.aTotal;
   // ─── BOUCLIER FISCAL ───
   var anneeCourrante = new Date().getFullYear();
   var anneesProtegees = 0, ecoTotale = 0, derniereBouclier = 0, reportAmort = 0;
   for(var yr=1; yr<=30; yr++) {
-    var aB_yr=yr<=30?aB:0, aT_yr=yr<=15?s.travaux/15:0, aM_yr=yr<=7?mob/7:0;
+    var aB_yr=yr<=30?m.aB:0, aT_yr=yr<=15?s.travaux/15:0, aM_yr=yr<=7?mob/7:0;
     var aF_yr=yr<=s.duree?(s.fraisAg+s.fraisNot)/s.duree:0;
     var amortDispo=aB_yr+aT_yr+aM_yr+aF_yr+reportAmort;
     var baseImpo=Math.max(0,bSans-amortDispo);
@@ -1167,7 +1169,7 @@ function updateLMNP(){
   var cfApresLMNP=s.cfM-impotAvec/12, cfApresNu=s.cfM-impotNu/12;
   var eco10=0, cfNet10L=0, cfNet10N=0;
   for(var y=1;y<=10;y++){
-    var aL=Math.max(0,bSans-((y<=30?aB:0)+(y<=15?s.travaux/15:0)+(y<=7?mob/7:0)+(y<=s.duree?(s.fraisAg+s.fraisNot)/s.duree:0)));
+    var aL=Math.max(0,bSans-((y<=30?m.aB:0)+(y<=15?s.travaux/15:0)+(y<=7?mob/7:0)+(y<=s.duree?(s.fraisAg+s.fraisNot)/s.duree:0)));
     var iL=aL*tauxTotal; eco10+=(bSans*tauxTotal-iL); cfNet10L+=(s.cfM-iL/12)*12;
     var defNu=bSans-defMax;
     if(defNu<0){reportNu+=Math.abs(defNu);baseNuAn1=0;}
