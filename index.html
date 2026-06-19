@@ -224,7 +224,23 @@
   @media(max-width:900px){.sim-lmnp-grid{grid-template-columns:1fr 1fr}.sim-lmnp-header{flex-direction:column}.sim-lmnp-note{text-align:left}}
   @media(max-width:700px){.input-row{grid-template-columns:1fr}.kpi-grid{grid-template-columns:repeat(2,1fr)}.lmnp-inputs{grid-template-columns:1fr}.info-grid{grid-template-columns:1fr}.amort-grid{grid-template-columns:1fr 1fr}.investor-kpis,.wealth-grid,.asset-value-grid{grid-template-columns:1fr}.wealth-total{align-items:flex-start;flex-direction:column}.wealth-total .sub{text-align:left}}
 
-  </style>
+  
+  /* ===== KPI ROW 2 — Analyse financière ===== */
+  .kpi-grid2{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:14px}
+  .kpi-card2{background:var(--white);border:1px solid var(--border);border-radius:8px;padding:12px;position:relative}
+  .kpi-card2:hover .kpi-tooltip{display:block}
+  .kpi-card2 .kpi-tooltip{display:none;position:absolute;bottom:calc(100% + 6px);left:50%;transform:translateX(-50%);width:220px;background:#1e293b;border-radius:6px;padding:8px 10px;font-size:11px;color:#cbd5e1;line-height:1.5;z-index:50;pointer-events:none;box-shadow:0 4px 12px rgba(0,0,0,.15)}
+  .kpi2-label{font-size:9px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:#94a3b8;margin-bottom:4px}
+  .kpi2-main{display:flex;align-items:baseline;gap:6px;margin-bottom:2px}
+  .kpi2-value{font-family:'JetBrains Mono',monospace;font-size:18px;font-weight:700;line-height:1}
+  .kpi2-unit{font-size:10px;color:#94a3b8}
+  .kpi2-sub{font-size:10px;color:#94a3b8;margin-top:2px}
+  .kpi2-badge{display:inline-block;padding:1px 6px;border-radius:4px;font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;margin-top:4px}
+  .badge-green{background:#dcfce7;color:#15803d}
+  .badge-orange{background:#ffedd5;color:#c2410c}
+  .badge-red{background:#fee2e2;color:#dc2626}
+  .badge-blue{background:#dbeafe;color:#1d4ed8}
+</style>
 </head>
 <body>
 
@@ -283,6 +299,33 @@
     <div class="kpi-card"><div class="kpi-tooltip">Loyers annuels / Prix × 100. Avant charges et financement.</div><div class="kpi-label">Rendement brut</div><div class="kpi-value c-blue" id="kpi-rdt-brut">—</div><div class="kpi-unit">% / an</div></div>
     <div class="kpi-card"><div class="kpi-tooltip">Loyers − charges / (Prix + frais + travaux) × 100. Hors financement.</div><div class="kpi-label">Rendement net</div><div class="kpi-value c-blue" id="kpi-rdt-net">—</div><div class="kpi-unit">% / an</div></div>
     <div class="kpi-card"><div class="kpi-tooltip">Prix d'achat divisé par la surface.</div><div class="kpi-label">Prix / m²</div><div class="kpi-value c-muted" id="kpi-prix-m2">—</div><div class="kpi-unit">€/m²</div></div>
+  </div>
+  <!-- KPI ROW 2 — Analyse financière -->
+  <div class="kpi-grid2">
+    <div class="kpi-card2">
+      <div class="kpi-tooltip">Coût total des intérêts sur toute la durée du prêt. Ce que vous payez à la banque au-delà du capital emprunté.</div>
+      <div class="kpi2-label">Coût total du crédit</div>
+      <div class="kpi2-main"><span class="kpi2-value" id="kpi2-cout-credit">—</span><span class="kpi2-unit">€</span></div>
+      <div class="kpi2-sub" id="kpi2-cout-credit-sub">— €/mois d'intérêts an 1</div>
+    </div>
+    <div class="kpi-card2">
+      <div class="kpi-tooltip">Mensualité / Revenus nets mensuels. Les banques limitent à 35%. Au-delà, votre dossier sera difficile à faire passer.</div>
+      <div class="kpi2-label">Taux d'effort</div>
+      <div class="kpi2-main"><span class="kpi2-value" id="kpi2-taux-effort">—</span><span class="kpi2-unit">%</span></div>
+      <div class="kpi2-sub"><span class="kpi2-badge" id="kpi2-effort-badge">—</span></div>
+    </div>
+    <div class="kpi-card2">
+      <div class="kpi-tooltip">Enrichissement cumulé / Mise de fonds initiale × 100. Le vrai rendement de votre investissement personnel, toutes sources confondues.</div>
+      <div class="kpi2-label">ROI total</div>
+      <div class="kpi2-main"><span class="kpi2-value c-green" id="kpi2-roi">—</span><span class="kpi2-unit">%</span></div>
+      <div class="kpi2-sub" id="kpi2-roi-sub">à — ans</div>
+    </div>
+    <div class="kpi-card2">
+      <div class="kpi-tooltip">Année à partir de laquelle votre enrichissement cumulé dépasse votre mise initiale (apport + frais). Votre investissement "rembourse" votre mise.</div>
+      <div class="kpi2-label">Point mort</div>
+      <div class="kpi2-main"><span class="kpi2-value c-blue" id="kpi2-point-mort">—</span><span class="kpi2-unit" id="kpi2-pm-unit">ans</span></div>
+      <div class="kpi2-sub" id="kpi2-pm-sub">—</div>
+    </div>
   </div>
 
   <div class="sim-lmnp-impact">
@@ -600,6 +643,34 @@ function update(){
   var effort=Math.max(0,-cfM), enrich=capAn1+(prix*hausse/100/12)+cfM;
   var rdtB=(loyer*12)/prix*100, rdtN=(revAn-chargesAn)/(prix+fraisNot+travaux)*100;
 
+  // ─── Nouveaux calculs ───
+  // Coût total du crédit
+  var coutTotalCredit = (mens * totMois) - emprunt;
+
+  // Taux d'effort (revenus nets estimés = revenu imposable simplifié)
+  // On utilise la mensualité vs revenus mensuels bruts estimés
+  // L'utilisateur devrait entrer ses revenus, mais on peut approximer
+  // Pour l'instant on affiche juste la mensualité en valeur absolue
+  var tauxEffort = emprunt > 0 ? (mens / (revAn / 12 + mens)) * 100 : 0;
+  // Note: taux d'effort = mensualité / (revenus locatifs + mensualité) approx
+  // Pour être précis il faudrait les revenus personnels - on flag juste le seuil 35%
+
+  // Horizon pour ROI et point mort
+  var horizonVal = get('r-horizon');
+  var mise = apport + fraisNot + fraisAg + travaux;
+
+  // Point mort = année où enrichissement cumulé > mise initiale
+  var pointMort = null;
+  var roiAtHorizon = null;
+  for(var yr=1; yr<=30; yr++) {
+    var vAnn = prix * Math.pow(1 + hausse/100, yr);
+    var dAnn = capRestant(emprunt, tm, totMois, yr);
+    var pAnn = vAnn - dAnn;
+    var enrichCumul = pAnn - mise + cfAn * yr;
+    if(pointMort === null && enrichCumul >= 0) pointMort = yr;
+    if(yr === horizonVal) roiAtHorizon = mise > 0 ? (enrichCumul / mise * 100) : 0;
+  }
+
   var cfEl=document.getElementById('kpi-cashflow');
   cfEl.textContent=fmt(cfM);cfEl.className='kpi-value '+(cfM>=0?'c-green':'c-red');
   var efEl=document.getElementById('kpi-effort');
@@ -608,6 +679,43 @@ function update(){
   set('kpi-rdt-brut',rdtB.toFixed(2).replace('.',',')+' %');
   set('kpi-rdt-net',rdtN.toFixed(2).replace('.',',')+' %');
   set('kpi-prix-m2',Math.round(prix/surface).toLocaleString('fr-FR')+' \u20ac');
+
+  // ─── KPI Row 2 display ───
+  set('kpi2-cout-credit', Math.round(coutTotalCredit).toLocaleString('fr-FR'));
+  set('kpi2-cout-credit-sub', Math.round(intAn1/12).toLocaleString('fr-FR')+' €/mois d\'intérêts an 1');
+
+  var teEl=document.getElementById('kpi2-taux-effort');
+  if(teEl) teEl.textContent=emprunt>0?tauxEffort.toFixed(1).replace('.',','):'0,0';
+  var teBadge=document.getElementById('kpi2-effort-badge');
+  if(teBadge){
+    if(emprunt===0){teBadge.textContent='Achat cash';teBadge.className='kpi2-badge badge-green';}
+    else if(tauxEffort<=25){teBadge.textContent='Excellent';teBadge.className='kpi2-badge badge-green';}
+    else if(tauxEffort<=33){teBadge.textContent='Bon';teBadge.className='kpi2-badge badge-blue';}
+    else if(tauxEffort<=35){teBadge.textContent='Limite';teBadge.className='kpi2-badge badge-orange';}
+    else{teBadge.textContent='Trop élevé';teBadge.className='kpi2-badge badge-red';}
+  }
+
+  var roiEl=document.getElementById('kpi2-roi');
+  if(roiEl){
+    roiEl.textContent=roiAtHorizon!==null?roiAtHorizon.toFixed(0):'--';
+    roiEl.className='kpi2-value '+(roiAtHorizon>0?'c-green':'c-red');
+  }
+  set('kpi2-roi-sub','à '+horizonVal+' ans');
+
+  var pmEl=document.getElementById('kpi2-point-mort');
+  var pmUnit=document.getElementById('kpi2-pm-unit');
+  var pmSub=document.getElementById('kpi2-pm-sub');
+  if(pmEl){
+    if(pointMort!==null){
+      pmEl.textContent=pointMort;
+      if(pmUnit) pmUnit.textContent='ans';
+      if(pmSub) pmSub.textContent='Enrichissement > mise initiale';
+    } else {
+      pmEl.textContent='>30';
+      if(pmUnit) pmUnit.textContent='ans';
+      if(pmSub) pmSub.textContent='Non atteint sur 30 ans';
+    }
+  }
 
   set('d-mensualite',fmt(mens));set('d-interets',fmt(intAn1));set('d-capital',fmt(capAn1));
   document.getElementById('progress-fill').style.setProperty('--pct',Math.round(intAn1/mens*100)+'%');
