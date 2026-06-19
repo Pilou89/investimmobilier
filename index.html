@@ -276,6 +276,43 @@
   .fav-filter{display:flex;gap:6px;margin-bottom:14px}
   .fav-filter button{padding:4px 12px;border-radius:6px;border:1px solid var(--border2);background:var(--white);color:var(--muted);font-family:var(--font);font-size:11px;cursor:pointer}
   .fav-filter button.active{background:var(--accent);color:white;border-color:var(--accent)}
+
+  .compare-layout{padding:20px 24px;max-width:1200px;margin:0 auto}
+  .compare-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px}
+  .compare-header h2{font-size:18px;font-weight:700}
+  .compare-cols{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px}
+  .compare-panel{background:var(--white);border:2px solid var(--border);border-radius:12px;padding:20px}
+  .compare-panel.bien-a{border-color:#bfdbfe}
+  .compare-panel.bien-b{border-color:#bbf7d0}
+  .compare-panel-title{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;margin-bottom:14px;display:flex;justify-content:space-between;align-items:center}
+  .bien-a .compare-panel-title{color:#1d4ed8}
+  .bien-b .compare-panel-title{color:#15803d}
+  .compare-field{margin-bottom:10px}
+  .compare-field label{display:block;font-size:11px;color:var(--muted);margin-bottom:3px}
+  .compare-field input{width:100%;padding:6px 10px;border:1px solid var(--border2);border-radius:6px;font-family:var(--mono);font-size:13px;color:var(--text);background:var(--white);outline:none}
+  .compare-field input:focus{border-color:var(--accent)}
+  .compare-field input[type=text]{font-family:var(--font)}
+  .compare-btn{padding:8px 18px;border-radius:7px;border:none;background:var(--accent);color:white;cursor:pointer;font-family:var(--font);font-size:13px;font-weight:600}
+  .load-sim-btn{font-size:11px;padding:3px 10px;border-radius:5px;cursor:pointer;font-family:var(--font)}
+  .load-sim-btn.a{border:1px solid #bfdbfe;background:var(--blue-bg);color:#1d4ed8}
+  .load-sim-btn.b{border:1px solid #bbf7d0;background:var(--green-bg);color:#15803d}
+  .compare-results{background:var(--white);border:1px solid var(--border);border-radius:12px;padding:20px;display:none}
+  .compare-results.show{display:block}
+  .compare-results h3{font-size:14px;font-weight:700;margin-bottom:16px}
+  .cmp-table{width:100%;border-collapse:collapse;font-size:13px}
+  .cmp-table th{padding:10px 14px;text-align:left;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted2);border-bottom:2px solid var(--border);background:var(--bg)}
+  .cmp-table th.col-a{color:#1d4ed8;text-align:right}
+  .cmp-table th.col-b{color:#15803d;text-align:right}
+  .cmp-table th.col-w{text-align:center}
+  .cmp-table td{padding:10px 14px;border-bottom:1px solid var(--border);color:var(--text2)}
+  .cmp-table td.val-a{text-align:right;font-family:var(--mono);font-weight:600;color:#1d4ed8}
+  .cmp-table td.val-b{text-align:right;font-family:var(--mono);font-weight:600;color:#15803d}
+  .cmp-table td.winner{text-align:center;font-size:18px}
+  .cmp-table tr.highlight td{background:#f0fdf4;font-weight:700}
+  .compare-verdict{margin-top:16px;padding:14px 16px;border-radius:8px;font-size:13px;line-height:1.6}
+  .compare-verdict.a{background:#eff6ff;border-left:3px solid #1d4ed8;color:#1e40af}
+  .compare-verdict.b{background:#f0fdf4;border-left:3px solid #15803d;color:#166534}
+  .compare-verdict.tie{background:var(--bg);border-left:3px solid var(--muted2);color:var(--text2)}
 </style>
 </head>
 <body>
@@ -293,6 +330,7 @@
     <button class="nav-tab active" data-page="simulateur" onclick="showPage('simulateur')">Simulateur</button>
     <button class="nav-tab" data-page="comparatif" onclick="showPage('comparatif')">📁 Simulations</button>
     <button class="nav-tab" data-page="lmnp" onclick="showPage('lmnp')">LMNP</button>
+    <button class="nav-tab" data-page="compare" onclick="showPage('compare')">Comparer</button>
   </div>
 </nav>
 
@@ -703,12 +741,12 @@ function update(){
     copro=getValue('copro'),pno=getValue('pno'),taxe=getValue('taxe'),entretien=getValue('entretien'),
     horizon=get('r-horizon');
 
-  set('v-prix',fmt(prix));set('v-surface',surface+' m²');set('v-travaux',fmt(travaux));
-  set('v-agence',pct(agPct));set('v-notaire',pct(notPct));set('v-hausse',pct(hausse));
-  set('v-apport',fmt(apport));set('v-taux',pct(taux));set('v-duree',duree+' ans');
-  set('v-loyer',fmt(loyer));set('v-vacance',pct(vacance));
+  set('v-travaux',fmt(travaux));
+  set('v-hausse',pct(hausse));
+  set('v-duree',duree+' ans');
+  set('v-vacance',pct(vacance));
   var semaines=Math.round(vacance/100*52);set('vacance-semaines','soit '+semaines+' semaine'+(semaines>1?'s':'')+'/an');
-  set('v-copro',fmt(copro));set('v-pno',fmt(pno));set('v-taxe',fmt(taxe));set('v-entretien',fmt(entretien));
+  set('v-entretien',fmt(entretien));
   set('horizon-val',horizon);
 
   // sync number inputs
@@ -725,7 +763,7 @@ function update(){
   var chargesAn=copro+pno+taxe+entretien, revAn=loyer*12*(1-vacance/100);
   if(document.getElementById('toggle-airbnb').checked){
     var nuits=get('r-nuits'),tarif=get('r-tarif'),comm=get('r-commission');
-    set('v-nuits',nuits+' nuits');set('v-tarif',fmt(tarif));set('v-commission',pct(comm));
+    set('v-commission',pct(comm));
     var revAir=nuits*tarif*(1-comm/100);set('c-airbnb',fmt(revAir)+'/an');revAn+=revAir;
   }
   set('c-revenu',fmt(revAn)+'/an');
@@ -1273,6 +1311,110 @@ function exportExcel(){
   XLSX.writeFile(wb, filename);
 }
 
+
+function getV(id){var el=document.getElementById(id);return el?parseFloat(el.value)||0:0;}
+function getS(id){var el=document.getElementById(id);return el?el.value:'';}
+
+function calcBien(prefix){
+  var prix=getV(prefix+'prix'),surface=getV(prefix+'surface'),loyer=getV(prefix+'loyer');
+  var apport=getV(prefix+'apport'),taux=getV(prefix+'taux'),duree=getV(prefix+'duree');
+  var charges=getV(prefix+'charges'),travaux=getV(prefix+'travaux');
+  var fraisPct=getV(prefix+'frais'),hausse=getV(prefix+'hausse');
+  var fraisM=(prix+travaux)*fraisPct/100;
+  var totalAcq=prix+travaux+fraisM;
+  var emprunt=Math.max(0,totalAcq-apport);
+  var tm=taux/100/12,totMois=duree*12;
+  var mens=emprunt>0?calcPMT(tm,totMois,emprunt):0;
+  var revAn=loyer*12*0.95;
+  var cfAn=revAn-charges-mens*12,cfM=cfAn/12;
+  var effort=Math.max(0,-cfM);
+  var rdtB=prix>0?(loyer*12)/prix*100:0;
+  var rdtN=(revAn-charges)/(prix+fraisM+travaux)*100;
+  var intAn1=emprunt*tm,capAn1=mens-intAn1;
+  var enrich=capAn1+(prix*hausse/100/12)+cfM;
+  var prixM2=surface>0?prix/surface:0;
+  var mise=apport+fraisM+travaux;
+  var pm=null;
+  for(var yr=1;yr<=30;yr++){
+    var v=prix*Math.pow(1+hausse/100,yr);
+    var d=yr*12>=totMois?0:emprunt*(Math.pow(1+tm,totMois)-Math.pow(1+tm,yr*12))/(Math.pow(1+tm,totMois)-1);
+    if(v-d-mise+cfAn*yr>=0&&pm===null)pm=yr;
+  }
+  var v20=prix*Math.pow(1+hausse/100,20);
+  var d20=20*12>=totMois?0:emprunt*(Math.pow(1+tm,totMois)-Math.pow(1+tm,240))/(Math.pow(1+tm,totMois)-1);
+  return {prix,surface,loyer,apport,mens,cfM,effort,rdtB,rdtN,enrich,prixM2,pm,pat20:v20-d20};
+}
+
+function loadCurrentInto(ab){
+  var s=window._sim;if(!s)return;
+  var p=s.params||{};
+  var x='c'+ab+'-';
+  var setVal=function(id,v){var el=document.getElementById(id);if(el)el.value=v;};
+  setVal(x+'prix',s.prix||0);
+  setVal(x+'surface',p.surface||0);
+  setVal(x+'loyer',p.loyer||0);
+  setVal(x+'apport',s.apport||0);
+  setVal(x+'taux',s.taux||3.5);
+  setVal(x+'duree',s.duree||20);
+  setVal(x+'charges',Math.round(s.chargesAn)||0);
+  setVal(x+'travaux',s.travaux||0);
+  setVal(x+'frais',p.agPct&&p.notPct?Math.round((parseFloat(p.agPct)+parseFloat(p.notPct))*10)/10:11.5);
+  setVal(x+'hausse',p.hausse||1.5);
+  runComparison();
+}
+
+function runComparison(){
+  var A=calcBien('ca-'),B=calcBien('cb-');
+  var nomA=getS('ca-nom')||'Bien A',nomB=getS('cb-nom')||'Bien B';
+  var fE=function(n){return Math.round(n).toLocaleString('fr-FR')+' €';};
+  var fM=function(n){return Math.round(n).toLocaleString('fr-FR')+' €/mois';};
+  var fP=function(pm){return pm!==null?pm+' ans':'>30 ans';};
+  var fPct=function(n){return n.toFixed(2).replace('.',',')+' %';};
+  var win=function(a,b,hi){
+    if(Math.abs(a-b)<0.5)return '=';
+    return (hi?a>b:a<b)?'A':'B';
+  };
+
+  set('th-a',nomA);set('th-b',nomB);
+
+  var data=[
+    ['cr-m2',  A.prixM2, B.prixM2, false, function(v){return fE(v)+'/m²';}],
+    ['cr-mens',A.mens,   B.mens,   false, fM],
+    ['cr-cf',  A.cfM,    B.cfM,    true,  fM],
+    ['cr-effort',A.effort,B.effort,false, fM],
+    ['cr-rdt', A.rdtB,   B.rdtB,   true,  fPct],
+    ['cr-rdtn',A.rdtN,   B.rdtN,   true,  fPct],
+    ['cr-enrich',A.enrich,B.enrich,true,  fM],
+    ['cr-pm',  A.pm!==null?A.pm:31,B.pm!==null?B.pm:31,false,function(v,pm){return fP(pm);}],
+    ['cr-pat', A.pat20,  B.pat20,  true,  fE],
+  ];
+  var pmA=A.pm,pmB=B.pm;
+  var scoreA=0,scoreB=0;
+
+  data.forEach(function(row){
+    var id=row[0],vA=row[1],vB=row[2],hi=row[3],fmt=row[4];
+    var dispA=id==='cr-pm'?fP(pmA):fmt(vA);
+    var dispB=id==='cr-pm'?fP(pmB):fmt(vB);
+    set(id+'-a',dispA);set(id+'-b',dispB);
+    var w=win(vA,vB,hi);
+    set(id+'-w',w==='='?'egal':w==='A'?nomA:nomB);
+    if(w==='A')scoreA++;else if(w==='B')scoreB++;
+  });
+
+  var vEl=document.getElementById('compare-verdict');
+  if(!vEl)return;
+  var msg,cls;
+  if(scoreA>scoreB){
+    msg='<strong>'+nomA+'</strong> remporte '+scoreA+'/'+data.length+' criteres. Meilleur profil rendement/cash-flow.';cls='a';
+  }else if(scoreB>scoreA){
+    msg='<strong>'+nomB+'</strong> remporte '+scoreB+'/'+data.length+' criteres. Meilleur profil rendement/cash-flow.';cls='b';
+  }else{
+    msg='Les deux biens sont equivalents sur les criteres retenus.';cls='tie';
+  }
+  vEl.innerHTML=msg;vEl.className='compare-verdict '+cls;
+  document.getElementById('compare-results').classList.add('show');
+}
+
 function resetAll(){
   Object.keys(DEFAULTS).forEach(function(k){var el=document.getElementById('r-'+k);if(el)el.value=DEFAULTS[k];});
   document.getElementById('toggle-airbnb').checked=false;
@@ -1306,5 +1448,75 @@ function syncRange(rangeId){
 
 function init(){update();setTimeout(function(){update();},300);}
 </script>
+
+<div id="page-compare" class="page">
+<div class="compare-layout">
+  <div class="compare-header">
+    <h2>Comparer 2 biens</h2>
+    <button class="compare-btn" onclick="runComparison()">Calculer</button>
+  </div>
+  <div class="compare-cols">
+    <div class="compare-panel bien-a">
+      <div class="compare-panel-title">
+        <span>Bien A</span>
+        <button class="load-sim-btn a" onclick="loadCurrentInto('a')">Charger simulation actuelle</button>
+      </div>
+      <div class="compare-field"><label>Prix d'achat (euros)</label><input type="number" id="ca-prix" value="340000" oninput="runComparison()"></div>
+      <div class="compare-field"><label>Surface (m2)</label><input type="number" id="ca-surface" value="65" oninput="runComparison()"></div>
+      <div class="compare-field"><label>Loyer mensuel (euros)</label><input type="number" id="ca-loyer" value="1500" oninput="runComparison()"></div>
+      <div class="compare-field"><label>Apport (euros)</label><input type="number" id="ca-apport" value="65000" oninput="runComparison()"></div>
+      <div class="compare-field"><label>Taux d'interet (%)</label><input type="number" id="ca-taux" value="3.5" step="0.05" oninput="runComparison()"></div>
+      <div class="compare-field"><label>Duree (ans)</label><input type="number" id="ca-duree" value="20" oninput="runComparison()"></div>
+      <div class="compare-field"><label>Charges annuelles (euros)</label><input type="number" id="ca-charges" value="2800" oninput="runComparison()"></div>
+      <div class="compare-field"><label>Travaux (euros)</label><input type="number" id="ca-travaux" value="0" oninput="runComparison()"></div>
+      <div class="compare-field"><label>Frais agence+notaire (%)</label><input type="number" id="ca-frais" value="11.5" step="0.5" oninput="runComparison()"></div>
+      <div class="compare-field"><label>Hausse annuelle (%)</label><input type="number" id="ca-hausse" value="1.5" step="0.1" oninput="runComparison()"></div>
+      <div class="compare-field"><label>Nom du bien</label><input type="text" id="ca-nom" placeholder="ex: Charenton T2"></div>
+    </div>
+    <div class="compare-panel bien-b">
+      <div class="compare-panel-title">
+        <span>Bien B</span>
+        <button class="load-sim-btn b" onclick="loadCurrentInto('b')">Charger simulation actuelle</button>
+      </div>
+      <div class="compare-field"><label>Prix d'achat (euros)</label><input type="number" id="cb-prix" value="280000" oninput="runComparison()"></div>
+      <div class="compare-field"><label>Surface (m2)</label><input type="number" id="cb-surface" value="45" oninput="runComparison()"></div>
+      <div class="compare-field"><label>Loyer mensuel (euros)</label><input type="number" id="cb-loyer" value="1100" oninput="runComparison()"></div>
+      <div class="compare-field"><label>Apport (euros)</label><input type="number" id="cb-apport" value="65000" oninput="runComparison()"></div>
+      <div class="compare-field"><label>Taux d'interet (%)</label><input type="number" id="cb-taux" value="3.5" step="0.05" oninput="runComparison()"></div>
+      <div class="compare-field"><label>Duree (ans)</label><input type="number" id="cb-duree" value="20" oninput="runComparison()"></div>
+      <div class="compare-field"><label>Charges annuelles (euros)</label><input type="number" id="cb-charges" value="2000" oninput="runComparison()"></div>
+      <div class="compare-field"><label>Travaux (euros)</label><input type="number" id="cb-travaux" value="0" oninput="runComparison()"></div>
+      <div class="compare-field"><label>Frais agence+notaire (%)</label><input type="number" id="cb-frais" value="11.5" step="0.5" oninput="runComparison()"></div>
+      <div class="compare-field"><label>Hausse annuelle (%)</label><input type="number" id="cb-hausse" value="1.5" step="0.1" oninput="runComparison()"></div>
+      <div class="compare-field"><label>Nom du bien</label><input type="text" id="cb-nom" placeholder="ex: Vincennes T1"></div>
+    </div>
+  </div>
+  <div class="compare-results" id="compare-results">
+    <h3>Comparaison</h3>
+    <table class="cmp-table">
+      <thead>
+        <tr>
+          <th>Indicateur</th>
+          <th class="col-a" id="th-a">Bien A</th>
+          <th class="col-b" id="th-b">Bien B</th>
+          <th class="col-w">Gagnant</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>Prix / m2</td><td class="val-a" id="cr-m2-a">-</td><td class="val-b" id="cr-m2-b">-</td><td class="winner" id="cr-m2-w">-</td></tr>
+        <tr><td>Mensualite</td><td class="val-a" id="cr-mens-a">-</td><td class="val-b" id="cr-mens-b">-</td><td class="winner" id="cr-mens-w">-</td></tr>
+        <tr><td>Cash-flow mensuel</td><td class="val-a" id="cr-cf-a">-</td><td class="val-b" id="cr-cf-b">-</td><td class="winner" id="cr-cf-w">-</td></tr>
+        <tr><td>Effort d epargne</td><td class="val-a" id="cr-effort-a">-</td><td class="val-b" id="cr-effort-b">-</td><td class="winner" id="cr-effort-w">-</td></tr>
+        <tr><td>Rendement brut</td><td class="val-a" id="cr-rdt-a">-</td><td class="val-b" id="cr-rdt-b">-</td><td class="winner" id="cr-rdt-w">-</td></tr>
+        <tr><td>Rendement net</td><td class="val-a" id="cr-rdtn-a">-</td><td class="val-b" id="cr-rdtn-b">-</td><td class="winner" id="cr-rdtn-w">-</td></tr>
+        <tr><td>Enrichissement mensuel</td><td class="val-a" id="cr-enrich-a">-</td><td class="val-b" id="cr-enrich-b">-</td><td class="winner" id="cr-enrich-w">-</td></tr>
+        <tr><td>Point mort</td><td class="val-a" id="cr-pm-a">-</td><td class="val-b" id="cr-pm-b">-</td><td class="winner" id="cr-pm-w">-</td></tr>
+        <tr class="highlight"><td>Patrimoine net a 20 ans</td><td class="val-a" id="cr-pat-a">-</td><td class="val-b" id="cr-pat-b">-</td><td class="winner" id="cr-pat-w">-</td></tr>
+      </tbody>
+    </table>
+    <div class="compare-verdict" id="compare-verdict"></div>
+  </div>
+</div>
+</div>
 </body>
 </html>
