@@ -29,6 +29,8 @@
   .nav-right{display:flex;gap:8px;align-items:center}
   .btn-save{padding:5px 14px;border-radius:6px;border:none;background:var(--green);color:#fff;cursor:pointer;font-family:var(--font);font-size:12px;font-weight:600}
   .btn-save:hover{background:#166534}
+  .btn-export{padding:5px 12px;border-radius:6px;border:none;background:#166534;color:white;cursor:pointer;font-family:var(--font);font-size:12px;font-weight:600}
+  .btn-export:hover{background:#15803d}
   .btn-reset{padding:5px 12px;border-radius:6px;border:1px solid var(--border2);background:transparent;color:var(--muted);cursor:pointer;font-family:var(--font);font-size:12px}
   .btn-reset:hover{background:var(--bg);color:var(--text2)}
 
@@ -283,7 +285,8 @@
     <div class="nav-brand">Invest<span>Simul</span></div>
     <div class="nav-right">
       <button class="btn-save" onclick="openSaveModal()">💾 Sauvegarder</button>
-      <button class="btn-reset" onclick="resetAll()">↺</button>
+      <button class="btn-export" onclick="exportExcel()" title="Exporter en Excel">📥 Excel</button>
+    <button class="btn-reset" onclick="resetAll()">↺</button>
     </div>
   </div>
   <div class="nav-bottom">
@@ -1172,6 +1175,103 @@ document.addEventListener('click', function(e){
   var btn = e.target.closest('.fav-btn');
   if(btn && btn.dataset.sid){ toggleFav(btn.dataset.sid, btn); }
 });
+
+
+function exportExcel(){
+  if(typeof XLSX === 'undefined'){ alert('SheetJS non chargé, réessayez dans quelques secondes.'); return; }
+  var s = window._sim;
+  if(!s){ alert('Lancez d\'abord une simulation.'); return; }
+  var p = s.params || {};
+  var wb = XLSX.utils.book_new();
+
+  // ─── Feuille 1 : Paramètres & KPIs ───
+  var fmtN = function(n){ return Math.round(n); };
+  var params_data = [
+    ['InvestSimul — Export simulation', '', ''],
+    ['Date', new Date().toLocaleDateString('fr-FR'), ''],
+    ['', '', ''],
+    ['PARAMÈTRES', '', ''],
+    ['Prix d\'achat', fmtN(s.prix), '€'],
+    ['Surface', p.surface || '', 'm²'],
+    ['Travaux', fmtN(s.travaux), '€'],
+    ['Frais d\'agence', p.agPct || '', '%'],
+    ['Frais de notaire', p.notPct || '', '%'],
+    ['Frais d\'agence (montant)', fmtN(s.fraisAg), '€'],
+    ['Frais de notaire (montant)', fmtN(s.fraisNot), '€'],
+    ['Coût total acquisition', fmtN(s.prix+s.fraisAg+s.fraisNot+s.travaux), '€'],
+    ['', '', ''],
+    ['FINANCEMENT', '', ''],
+    ['Apport', fmtN(s.apport), '€'],
+    ['Montant emprunté', fmtN(s.emprunt), '€'],
+    ['Taux d\'intérêt', s.taux || '', '%'],
+    ['Durée', s.duree || '', 'ans'],
+    ['Mensualité', fmtN(s.mens), '€/mois'],
+    ['Coût total crédit', fmtN(s.mens*s.totMois - s.emprunt), '€'],
+    ['', '', ''],
+    ['REVENUS & CHARGES', '', ''],
+    ['Loyer mensuel', fmtN(s.loyer || p.loyer), '€/mois'],
+    ['Vacance locative', p.vacance || '', '%'],
+    ['Revenu annuel effectif', fmtN(s.revAn), '€/an'],
+    ['Charges annuelles', fmtN(s.chargesAn), '€/an'],
+    ['', '', ''],
+    ['KPIs', '', ''],
+    ['Cash-flow mensuel', fmtN(s.cfM), '€/mois'],
+    ['Effort d\'épargne', fmtN(s.effort), '€/mois'],
+    ['Enrichissement mensuel', fmtN(s.enrich), '€/mois'],
+    ['Rendement brut', parseFloat(s.rdtB).toFixed(2), '%'],
+    ['Rendement net', parseFloat(s.rdtN).toFixed(2), '%'],
+    ['Prix / m²', fmtN(s.prixM2), '€/m²'],
+    ['Intérêts an 1 (mensuel)', fmtN(s.intAn1/12), '€/mois'],
+    ['Capital remboursé an 1 (mensuel)', fmtN(s.capAn1), '€/mois'],
+  ];
+
+  var ws1 = XLSX.utils.aoa_to_sheet(params_data);
+  ws1['!cols'] = [{wch:35},{wch:15},{wch:10}];
+  // Style header rows
+  XLSX.utils.book_append_sheet(wb, ws1, 'Paramètres & KPIs');
+
+  // ─── Feuille 2 : Projection 30 ans ───
+  var hausse = p.hausse || 1.5;
+  var proj_header = ['Année', 'Valeur du bien (€)', 'Capital restant dû (€)', 'Patrimoine net (€)', 'Cash-flow cumulé (€)', 'Enrichissement cumulé (€)'];
+  var proj_data = [proj_header];
+  var mise = s.apport + s.fraisNot + s.fraisAg + s.travaux;
+  var cfAn = s.cfM * 12;
+  for(var yr=0; yr<=30; yr++){
+    var val = Math.round(s.prix * Math.pow(1+hausse/100, yr));
+    var dette = yr===0 ? s.emprunt : Math.round(
+      s.emprunt*(Math.pow(1+s.tm,s.totMois)-Math.pow(1+s.tm,yr*12))/(Math.pow(1+s.tm,s.totMois)-1)
+    );
+    if(yr*12 >= s.totMois) dette = 0;
+    var patNet = val - dette;
+    var cfCumul = Math.round(cfAn * yr);
+    var enrichCumul = Math.round(patNet - mise + cfCumul);
+    proj_data.push([
+      yr===0 ? 'Achat' : 'An '+yr,
+      val, dette, patNet, cfCumul, enrichCumul
+    ]);
+  }
+  var ws2 = XLSX.utils.aoa_to_sheet(proj_data);
+  ws2['!cols'] = [{wch:8},{wch:18},{wch:20},{wch:18},{wch:20},{wch:22}];
+  XLSX.utils.book_append_sheet(wb, ws2, 'Projection 30 ans');
+
+  // ─── Feuille 3 : Mensualité détaillée (tableau amortissement an 1-5) ───
+  var amort_header = ['Mois', 'Mensualité (€)', 'Intérêts (€)', 'Capital (€)', 'Capital restant (€)'];
+  var amort_data = [amort_header];
+  var cap = s.emprunt;
+  for(var m=1; m<=Math.min(60, s.totMois); m++){
+    var int_m = Math.round(cap * s.tm * 100) / 100;
+    var cap_m = Math.round((s.mens - cap*s.tm) * 100) / 100;
+    cap = Math.max(0, cap - cap_m);
+    amort_data.push([m, Math.round(s.mens), Math.round(int_m), Math.round(cap_m), Math.round(cap)]);
+  }
+  var ws3 = XLSX.utils.aoa_to_sheet(amort_data);
+  ws3['!cols'] = [{wch:6},{wch:16},{wch:14},{wch:12},{wch:18}];
+  XLSX.utils.book_append_sheet(wb, ws3, 'Amortissement crédit (60 mois)');
+
+  // ─── Export ───
+  var filename = 'InvestSimul_' + new Date().toISOString().slice(0,10) + '.xlsx';
+  XLSX.writeFile(wb, filename);
+}
 
 function resetAll(){
   Object.keys(DEFAULTS).forEach(function(k){var el=document.getElementById('r-'+k);if(el)el.value=DEFAULTS[k];});
