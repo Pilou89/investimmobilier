@@ -348,9 +348,9 @@
       <div class="field"><div class="field-label"><span>Prix d'achat</span><input type="number" class="num-input" id="n-prix" min="50000" max="1000000" step="5000" value="340000" oninput="syncNum('r-prix',this)"></div><input type="range" id="r-prix" min="50000" max="1000000" step="5000" value="340000" oninput="syncRange('r-prix');update()"></div>
       <div class="field"><div class="field-label"><span>Surface (m²)</span><input type="number" class="num-input" id="n-surface" min="10" max="200" step="1" value="65" oninput="syncNum('r-surface',this)"></div><input type="range" id="r-surface" min="10" max="200" step="1" value="65" oninput="syncRange('r-surface');update()"></div>
       <div class="field"><div class="field-label"><span>Travaux</span><input type="number" class="num-input" id="n-travaux" min="0" max="50000" step="500" value="0" oninput="syncNum('r-travaux',this)"></div><input type="range" id="r-travaux" min="0" max="50000" step="500" value="0" oninput="syncRange('r-travaux');update()"></div>
-      <div class="field"><div class="field-label"><span>Frais d'agence</span><span id="v-agence"></span></div><input type="range" id="r-agence" min="0" max="8" step="0.5" value="4" oninput="update()"></div>
-      <div class="field"><div class="field-label"><span>Frais de notaire</span><span id="v-notaire"></span></div><input type="range" id="r-notaire" min="2" max="9" step="0.5" value="7.5" oninput="update()"></div>
-      <div class="field"><div class="field-label"><span>Hausse annuelle estimée</span><span id="v-hausse"></span></div><input type="range" id="r-hausse" min="0" max="5" step="0.1" value="1.5" oninput="update()"></div>
+      <div class="field"><div class="field-label"><span>Frais d'agence</span><input type="number" class="num-input" id="n-agence" min="0" max="8" step="0.5" value="4" oninput="syncNum('r-agence',this)"></div><input type="range" id="r-agence" min="0" max="8" step="0.5" value="4" oninput="syncRange('r-agence');update()"></div>
+      <div class="field"><div class="field-label"><span>Frais de notaire</span><input type="number" class="num-input" id="n-notaire" min="2" max="9" step="0.5" value="7.5" oninput="syncNum('r-notaire',this)"></div><input type="range" id="r-notaire" min="2" max="9" step="0.5" value="7.5" oninput="syncRange('r-notaire');update()"></div>
+      <div class="field"><div class="field-label"><span>Hausse annuelle estimée</span><input type="number" class="num-input" id="n-hausse" min="0" max="5" step="0.1" value="1.5" oninput="syncNum('r-hausse',this)"></div><input type="range" id="r-hausse" min="0" max="5" step="0.1" value="1.5" oninput="syncRange('r-hausse');update()"></div>
       <div class="calc-row"><span>Frais d'agence</span><span id="c-agence">—</span></div>
       <div class="calc-row"><span>Frais de notaire</span><span id="c-notaire">—</span></div>
       <div class="calc-row"><span>Coût total</span><span id="c-total-acq">—</span></div>
@@ -360,7 +360,7 @@
       <div class="panel-title">🏦 Financement</div>
       <div class="field"><div class="field-label"><span>Apport</span><input type="number" class="num-input" id="n-apport" min="0" max="650000" step="5000" value="65000" oninput="syncNum('r-apport',this)"></div><input type="range" id="r-apport" min="0" max="650000" step="5000" value="65000" oninput="syncRange('r-apport');update()"></div>
       <div class="field"><div class="field-label"><span>Taux d'intérêt</span><input type="number" class="num-input" id="n-taux" min="0" max="6" step="0.05" value="3.5" oninput="syncNum('r-taux',this)"></div><input type="range" id="r-taux" min="0" max="6" step="0.05" value="3.5" oninput="syncRange('r-taux');update()"></div>
-      <div class="field"><div class="field-label"><span>Durée du prêt</span><span id="v-duree"></span></div><input type="range" id="r-duree" min="10" max="30" step="1" value="20" oninput="update()"></div>
+      <div class="field"><div class="field-label"><span>Durée du prêt</span><input type="number" class="num-input" id="n-duree" min="10" max="30" step="1" value="20" oninput="syncNum('r-duree',this)"></div><input type="range" id="r-duree" min="10" max="30" step="1" value="20" oninput="syncRange('r-duree');update()"></div>
       <div class="field"><div class="field-label"><span>Revenus nets mensuels</span><input type="number" class="num-input" id="n-revenus" min="0" max="20000" step="100" value="3500" oninput="syncNum('r-revenus',this)"></div><input type="range" id="r-revenus" min="0" max="20000" step="100" value="3500" oninput="syncRange('r-revenus');update()"></div>
       <div class="calc-row"><span>Montant emprunté</span><span id="c-emprunt">—</span></div>
       <div class="calc-row"><span>Mensualité</span><span id="c-mensualite">—</span></div>
@@ -369,14 +369,15 @@
     <div class="panel panel-revenus">
       <div class="panel-title">💰 Revenus locatifs</div>
       <div class="field"><div class="field-label"><span>Loyer mensuel (€/mois)</span><input type="number" class="num-input" id="n-loyer" min="300" max="5000" step="50" value="1500" oninput="syncNum('r-loyer',this)"></div><input type="range" id="r-loyer" min="300" max="5000" step="50" value="1500" oninput="syncRange('r-loyer');update()"></div>
-      <div class="field"><div class="field-label"><span>Vacance locative</span><span id="v-vacance"></span></div><input type="range" id="r-vacance" min="0" max="20" step="0.5" value="5" oninput="update()"></div>
+      <div class="field"><div class="field-label"><span>Vacance locative</span><input type="number" class="num-input" id="n-vacance" min="0" max="20" step="0.5" value="5" oninput="syncNum('r-vacance',this)"></div><input type="range" id="r-vacance" min="0" max="20" step="0.5" value="5" oninput="syncRange('r-vacance');update()"></div>
+      <div style="font-size:10px;color:var(--muted);margin-bottom:6px;font-family:var(--mono)" id="vacance-semaines">soit — semaines/an</div>
       <div class="calc-row"><span>Revenu annuel effectif</span><span id="c-revenu">—</span></div>
       <div style="margin-top:10px">
         <div class="toggle-row"><span>Option Airbnb</span><label class="toggle"><input type="checkbox" id="toggle-airbnb" onchange="toggleAirbnb()"><span class="toggle-slider"></span></label></div>
         <div class="airbnb-fields" id="airbnb-fields">
-          <div class="field"><div class="field-label"><span>Nuits louées (nuits/an)</span><span id="v-nuits"></span></div><input type="range" id="r-nuits" min="0" max="365" step="5" value="60" oninput="update()"></div>
-          <div class="field"><div class="field-label"><span>Tarif par nuit (€)</span><span id="v-tarif"></span></div><input type="range" id="r-tarif" min="20" max="500" step="5" value="80" oninput="update()"></div>
-          <div class="field"><div class="field-label"><span>Commission plateforme</span><span id="v-commission"></span></div><input type="range" id="r-commission" min="0" max="25" step="0.5" value="15" oninput="update()"></div>
+          <div class="field"><div class="field-label"><span>Nuits louées (nuits/an)</span><input type="number" class="num-input" id="n-nuits" min="0" max="365" step="5" value="60" oninput="syncNum('r-nuits',this)"></div><input type="range" id="r-nuits" min="0" max="365" step="5" value="60" oninput="syncRange('r-nuits');update()"></div>
+          <div class="field"><div class="field-label"><span>Tarif par nuit (€)</span><input type="number" class="num-input" id="n-tarif" min="20" max="500" step="5" value="80" oninput="syncNum('r-tarif',this)"></div><input type="range" id="r-tarif" min="20" max="500" step="5" value="80" oninput="syncRange('r-tarif');update()"></div>
+          <div class="field"><div class="field-label"><span>Commission plateforme</span><input type="number" class="num-input" id="n-commission" min="0" max="25" step="0.5" value="15" oninput="syncNum('r-commission',this)"></div><input type="range" id="r-commission" min="0" max="25" step="0.5" value="15" oninput="syncRange('r-commission');update()"></div>
           <div class="calc-row"><span>Revenu Airbnb annuel</span><span id="c-airbnb">—</span></div>
         </div>
       </div>
@@ -616,11 +617,12 @@ function update(){
   set('v-agence',pct(agPct));set('v-notaire',pct(notPct));set('v-hausse',pct(hausse));
   set('v-apport',fmt(apport));set('v-taux',pct(taux));set('v-duree',duree+' ans');
   set('v-loyer',fmt(loyer));set('v-vacance',pct(vacance));
+  var semaines=Math.round(vacance/100*52);set('vacance-semaines','soit '+semaines+' semaine'+(semaines>1?'s':'')+'/an');
   set('v-copro',fmt(copro));set('v-pno',fmt(pno));set('v-taxe',fmt(taxe));set('v-entretien',fmt(entretien));
   set('horizon-val',horizon);
 
   // sync number inputs
-  ['prix','surface','travaux','apport','taux','loyer','copro','pno','taxe','entretien'].forEach(function(k){syncRange('r-'+k);});
+  ['prix','surface','travaux','apport','taux','loyer','revenus','agence','notaire','hausse','duree','vacance','copro','pno','taxe','entretien','nuits','tarif','commission'].forEach(function(k){syncRange('r-'+k);});
 
 
   var fraisAg=prix*agPct/100, fraisNot=(prix+fraisAg)*notPct/100;
