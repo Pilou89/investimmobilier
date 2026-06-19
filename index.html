@@ -361,6 +361,7 @@
       <div class="field"><div class="field-label"><span>Apport</span><input type="number" class="num-input" id="n-apport" min="0" max="650000" step="5000" value="65000" oninput="syncNum('r-apport',this)"></div><input type="range" id="r-apport" min="0" max="650000" step="5000" value="65000" oninput="syncRange('r-apport');update()"></div>
       <div class="field"><div class="field-label"><span>Taux d'intérêt</span><input type="number" class="num-input" id="n-taux" min="0" max="6" step="0.05" value="3.5" oninput="syncNum('r-taux',this)"></div><input type="range" id="r-taux" min="0" max="6" step="0.05" value="3.5" oninput="syncRange('r-taux');update()"></div>
       <div class="field"><div class="field-label"><span>Durée du prêt</span><span id="v-duree"></span></div><input type="range" id="r-duree" min="10" max="30" step="1" value="20" oninput="update()"></div>
+      <div class="field"><div class="field-label"><span>Revenus nets mensuels</span><input type="number" class="num-input" id="n-revenus" min="0" max="20000" step="100" value="3500" oninput="syncNum('r-revenus',this)"></div><input type="range" id="r-revenus" min="0" max="20000" step="100" value="3500" oninput="syncRange('r-revenus');update()"></div>
       <div class="calc-row"><span>Montant emprunté</span><span id="c-emprunt">—</span></div>
       <div class="calc-row"><span>Mensualité</span><span id="c-mensualite">—</span></div>
     </div>
@@ -571,7 +572,7 @@ var BIN_ID = null; // sera créé automatiquement au premier save
 })();
 
 var chart=null, pendingData=null;
-var DEFAULTS={prix:340000,surface:65,travaux:0,agence:4,notaire:7.5,hausse:1.5,apport:65000,taux:3.5,duree:20,loyer:1500,vacance:5,copro:1200,pno:300,taxe:800,entretien:500,nuits:60,tarif:80,commission:15,horizon:25};
+var DEFAULTS={prix:340000,surface:65,travaux:0,agence:4,notaire:7.5,hausse:1.5,apport:65000,taux:3.5,duree:20,revenus:3500,loyer:1500,vacance:5,copro:1200,pno:300,taxe:800,entretien:500,nuits:60,tarif:80,commission:15,horizon:25};
 
 function fmt(n){return Math.round(n).toLocaleString('fr-FR')+' \u20ac';}
 function pct(n){return n.toFixed(1).replace('.',',')+' %';}
@@ -647,13 +648,10 @@ function update(){
   // Coût total du crédit
   var coutTotalCredit = (mens * totMois) - emprunt;
 
-  // Taux d'effort (revenus nets estimés = revenu imposable simplifié)
-  // On utilise la mensualité vs revenus mensuels bruts estimés
-  // L'utilisateur devrait entrer ses revenus, mais on peut approximer
-  // Pour l'instant on affiche juste la mensualité en valeur absolue
-  var tauxEffort = emprunt > 0 ? (mens / (revAn / 12 + mens)) * 100 : 0;
-  // Note: taux d'effort = mensualité / (revenus locatifs + mensualité) approx
-  // Pour être précis il faudrait les revenus personnels - on flag juste le seuil 35%
+  // Taux d'effort réel = mensualité / (revenus perso nets + loyers)
+  var revenusMensuels = getValue('revenus');
+  var revenusTotauxMensuels = revenusMensuels + revAn / 12;
+  var tauxEffort = revenusTotauxMensuels > 0 ? (mens / revenusTotauxMensuels) * 100 : 0;
 
   // Horizon pour ROI et point mort
   var horizonVal = get('r-horizon');
@@ -1011,6 +1009,8 @@ function updateLMNP(){
 function resetAll(){
   Object.keys(DEFAULTS).forEach(function(k){var el=document.getElementById('r-'+k);if(el)el.value=DEFAULTS[k];});
   document.getElementById('toggle-airbnb').checked=false;
+  var rEl=document.getElementById('r-revenus');if(rEl)rEl.value=3500;
+  var nEl=document.getElementById('n-revenus');if(nEl)nEl.value=3500;
   document.getElementById('airbnb-fields').classList.remove('show');
   document.getElementById('toggle-enrich-curve').checked=false;
   document.getElementById('lr-terrain').value=15;
